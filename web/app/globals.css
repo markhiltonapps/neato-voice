@@ -8,7 +8,34 @@
 
 @layer base {
   body {
-    @apply bg-vault-navy text-vault-paper font-sans tracking-wide;
+    color: var(--foreground);
+    background: var(--background);
+    /* Use variable directly instead of @apply */
+    font-family: var(--font-jost), sans-serif;
+    overflow-x: hidden;
+    height: 100vh;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1C1F26;
+    /* vault-metal */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #4A5A3C;
+    /* vault-olive */
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #39FF14;
+    /* atom-green */
   }
 
   h1,
@@ -17,7 +44,9 @@
   h4,
   h5,
   h6 {
-    @apply font-mono uppercase tracking-[0.1em];
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 }
 
