@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 export default function AppDashboard() {
     const [activeTab, setActiveTab] = useState('home');
     const [userEmail, setUserEmail] = useState<string>('');
-    const [credits, setCredits] = useState<number>(0);
+    const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
 
     const [stats, setStats] = useState({
@@ -42,9 +42,10 @@ export default function AppDashboard() {
             setUserEmail(user.email || '');
 
             // Fetch Profile
-            const { data: profile } = await supabase.from('profiles').select('credits_balance').eq('id', user.id).single();
+            const { data: profile } = await supabase.from('profiles').select('credits_balance, role').eq('id', user.id).single();
             if (profile) {
                 setCredits(Number(profile.credits_balance));
+                setIsAdmin(profile.role === 'admin');
             }
         };
         init();
@@ -80,6 +81,9 @@ export default function AppDashboard() {
                 <div className="h-10 bg-vault-charcoal border-b border-vault-olive flex items-center justify-between px-4 text-xs font-mono">
                     <div>OPERATOR: <span className="text-atom-amber">{userEmail}</span></div>
                     <div className="flex items-center gap-4">
+                        {isAdmin && (
+                            <button onClick={() => router.push('/admin')} className="text-vault-rust hover:text-atom-amber hover:underline transition-colors mr-4">[ADMIN PANEL]</button>
+                        )}
                         <div>CREDITS: <span className={credits < 2 ? 'text-vault-rust animate-pulse' : 'text-atom-green'}>${credits.toFixed(2)}</span></div>
                         <button onClick={() => router.push('/pricing')} className="border border-atom-teal text-atom-teal px-2 hover:bg-atom-teal hover:text-vault-navy transition-colors">ADD FUNDS</button>
                     </div>
