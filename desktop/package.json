@@ -10,7 +10,8 @@
     "dev": "set NODE_ENV=development && electron .",
     "build": "electron-builder",
     "build:win": "electron-builder --win",
-    "build:portable": "electron-builder --win portable"
+    "build:portable": "electron-builder --win portable",
+    "release": "node scripts/release.js"
   },
   "build": {
     "publish": [
