@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 export default function AppDashboard() {
     const [activeTab, setActiveTab] = useState('home');
     const [userEmail, setUserEmail] = useState<string>('');
+    const [credits, setCredits] = useState<number>(0);
     const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
 
