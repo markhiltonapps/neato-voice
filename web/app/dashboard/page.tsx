@@ -80,7 +80,12 @@ export default function AppDashboard() {
 
                 {/* Top Bar for Credits */}
                 <div className="h-10 bg-vault-charcoal border-b border-vault-olive flex items-center justify-between px-4 text-xs font-mono">
-                    <div>OPERATOR: <span className="text-atom-amber">{userEmail}</span></div>
+                    <div className="flex items-center gap-4">
+                        <div>OPERATOR: <span className="text-atom-amber">{userEmail}</span></div>
+                        <a href="/download" target="_blank" className="text-vault-dust hover:text-atom-green hover:underline">
+                            ⇩ DOWNLOAD_APP
+                        </a>
+                    </div>
                     <div className="flex items-center gap-4">
                         {isAdmin && (
                             <button onClick={() => router.push('/admin')} className="text-vault-rust hover:text-atom-amber hover:underline transition-colors mr-4">[ADMIN PANEL]</button>

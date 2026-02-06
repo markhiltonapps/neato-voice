@@ -15,6 +15,7 @@ export default function LandingPage() {
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-8 font-mono text-sm">
+                <Link href="/download" className="hover:text-atom-amber transition-colors">DOWNLOAD_APP</Link>
                 <a href="#features" className="hover:text-atom-amber transition-colors">MODULES</a>
                 <a href="#pricing" className="hover:text-atom-amber transition-colors">REQ_ACCESS</a>
                 <a href="#about" className="hover:text-atom-amber transition-colors">ABOUT</a>
