@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import ReleaseInstructions from "./ReleaseInstructions";
 
 export const dynamic = 'force-dynamic';
 
-export default async function ReleasesPage() {
+export default async function ReleasesPage({ searchParams }: { searchParams: { showGuide?: string } }) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -30,22 +31,40 @@ export default async function ReleasesPage() {
         error = e.message;
     }
 
+    // Handle search params for showGuide, default false
+    // Note: searchParams is passed as a promise or object depending on next.js version, but typically object in page props
+    // Correctly handling potentially undefined searchParams
+    const showGuide = searchParams?.showGuide === 'true';
+
     return (
         <div className="min-h-screen bg-vault-navy p-8 font-mono text-vault-paper">
             <div className="max-w-5xl mx-auto">
-                <header className="mb-8 border-b border-vault-olive/30 pb-4">
-                    <h1 className="text-3xl font-bold text-atom-amber text-glow">RELEASE LOGISTICS</h1>
-                    <p className="text-vault-dust text-xs uppercase tracking-widest">Global Distribution Network</p>
+                <header className="mb-8 border-b border-vault-olive/30 pb-4 flex justify-between items-end">
+                    <div>
+                        <h1 className="text-3xl font-bold text-atom-amber text-glow">RELEASE LOGISTICS</h1>
+                        <p className="text-vault-dust text-xs uppercase tracking-widest">Global Distribution Network</p>
+                    </div>
+                    <div className="mb-1">
+                        <a
+                            href={showGuide ? "/admin/releases" : "/admin/releases?showGuide=true"}
+                            className={`text-xs uppercase tracking-widest border px-3 py-1 transition-colors flex items-center gap-2 ${showGuide ? 'bg-atom-teal text-vault-navy border-atom-teal' : 'text-atom-teal border-atom-teal/30 hover:bg-atom-teal hover:text-vault-navy'}`}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            {showGuide ? "HIDE PROTOCOL" : "SHOW RELEASE PROTOCOL"}
+                        </a>
+                    </div>
                 </header>
 
-                <div className="flex gap-4 mb-8">
+                {showGuide && <ReleaseInstructions />}
+
+                <div className="flex gap-4 mb-8 mt-6">
                     <a
                         href="https://github.com/markhiltonapps/neato-voice/releases/new"
                         target="_blank"
                         className="bg-atom-green text-vault-navy px-4 py-2 text-sm font-bold hover:bg-white transition-colors flex items-center gap-2"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
-                        DEPLOY NEW VERSION
+                        DEPLOY NEW VERSION (GITHUB)
                     </a>
                 </div>
 
