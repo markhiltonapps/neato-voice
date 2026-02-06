@@ -16,7 +16,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "NeatoVentures",
+        "owner": "markhiltonapps",
         "repo": "neato-voice"
       }
     ],

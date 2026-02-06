@@ -91,6 +91,17 @@ export default async function AdminDashboard() {
                     </div>
                 </header>
 
+                {/* Sub-Navigation */}
+                <div className="flex justify-end mb-4 border-b border-vault-olive/10 pb-2">
+                    <a
+                        href="/admin/releases"
+                        className="text-xs uppercase tracking-widest text-atom-teal border border-atom-teal/30 px-3 py-1 hover:bg-atom-teal hover:text-vault-navy transition-colors flex items-center gap-2"
+                    >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Release Logistics
+                    </a>
+                </div>
+
                 {/* Business Overview Panels */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-vault-charcoal/50 border border-vault-olive p-6 rounded-lg relative overflow-hidden group">
