@@ -95,11 +95,9 @@ function createWindow() {
         mainWindow.loadURL('http://localhost:3000');
         mainWindow.webContents.openDevTools();
     } else {
-        // Load the exported Next.js static files
-        const indexPath = path.join(__dirname, 'web-build', 'index.html');
-        log(`Loading file from: ${indexPath}`);
-        mainWindow.loadFile(indexPath).catch(e => log(`Failed to load file: ${e}`));
-        // DEBUG: Open devtools even in prod
+        // Load the live production web app
+        log('Loading production URL');
+        mainWindow.loadURL('https://neato-voice.netlify.app');
         // mainWindow.webContents.openDevTools();
     }
 
@@ -282,20 +280,7 @@ function registerHotkeys() {
                 store.set('stats', stats);
             }
 
-            if (stats.wordsThisWeek >= 4000) {
-                log('[Limit] Weekly word limit reached');
-                // Check if window is visible, if so show dialog? Or just beep?
-                // Since hotkey is global, window might be hidden.
-                // If we use dialog.showMessageBox, it might steal focus awkwardly.
-                // But user requested limit enforcement.
-                dialog.showMessageBox({
-                    type: 'info',
-                    title: 'Limit Reached',
-                    message: 'You have used your 4,000 free words this week. Upgrade to Pro for unlimited dictation.',
-                    buttons: ['OK']
-                });
-                return;
-            }
+
 
             if (mainWindow && !mainWindow.isDestroyed()) {
                 // Wake up the renderer invisibly to ensure AudioContext works
