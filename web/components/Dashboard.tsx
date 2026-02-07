@@ -11,9 +11,10 @@ interface DashboardProps {
         dictionarySize?: number;
     };
     lastTranscript: string;
+    refinedTranscript?: string;
 }
 
-export function Dashboard({ stats, lastTranscript }: DashboardProps) {
+export function Dashboard({ stats, lastTranscript, refinedTranscript }: DashboardProps) {
     const totalMinutes = Math.floor(stats.totalDictationTimeMs / 60000);
 
     // Calculate Personalization Score
@@ -96,8 +97,8 @@ export function Dashboard({ stats, lastTranscript }: DashboardProps) {
             {/* Last Transcript */}
             <div className="mt-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Last transcript</h3>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 min-h-[100px] text-gray-600">
-                    {lastTranscript || 'No transcript yet. Try dictating something!'}
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 min-h-[100px] text-gray-600 whitespace-pre-wrap">
+                    {refinedTranscript || lastTranscript || 'No transcript yet. Try dictating something!'}
                 </div>
             </div>
 
