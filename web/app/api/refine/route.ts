@@ -50,15 +50,16 @@ Input Text:
 "${text}"
 
 Instructions:
-1. **Analyze Intent:** Determine if the speaker is dictating a list, a note, a letter, or a stream of consciousness.
+1. **Analyze Intent:** Look for multiple actions, items, or steps.
 2. **Apply Structure:**
-   - If it sounds like a list (e.g., "I need to do X, then Y, then Z"), format it as a bulleted or numbered list.
-   - If it has distinct sections, use bold headers.
-   - If it is a paragraph, keep it flowy but fix run-on sentences.
-3. **Refine formatting:**
-   - Remove disfluencies (um, uh, like).
-   - Fix punctuation and capitalization.
-   - Maintain the original "voice" and "intent" but make it look professional.
+   - **CRITICAL:** If there are 3+ items or actions, YOU MUST format them as a bulleted list.
+   - Example Input: "I need to X, Y, and Z"
+   - Example Output:
+     * X
+     * Y
+     * Z
+   - If it is a letter/note, use proper newlines and headers.
+3. **Refine:** Remove filler words, fix grammar, but prioritized STRUCTURE over flow.
 
 Output ONLY the final refined text. Do not add conversational filler like "Here is the text:".`
             }],
