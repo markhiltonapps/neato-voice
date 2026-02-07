@@ -44,16 +44,23 @@ export async function POST(request: NextRequest) {
             max_tokens: 1024,
             messages: [{
                 role: 'user',
-                content: `You are a transcription refinement assistant. Your job is to rewrite raw speech-to-text input into clear, professional, and well-formatted text.
-Rules:
-1.  **Fix Punctuation & Casing:** Add periods, commas, question marks. Capitalize sentences.
-2.  **Remove Disfluencies:** Remove "um", "uh", "like", "you know".
-3.  **Preserve Meaning:** Do not change the intent.
-4.  **Format Lists:** Use numbered lists for multiple items.
-5.  **No Chat:** Output ONLY the refined text.
+                content: `You are an expert editor and restructuring agent. Your goal is to not just "fix" text, but to format it intelligently based on intent.
 
-Refine this:
-${text}`
+Input Text:
+"${text}"
+
+Instructions:
+1. **Analyze Intent:** Determine if the speaker is dictating a list, a note, a letter, or a stream of consciousness.
+2. **Apply Structure:**
+   - If it sounds like a list (e.g., "I need to do X, then Y, then Z"), format it as a bulleted or numbered list.
+   - If it has distinct sections, use bold headers.
+   - If it is a paragraph, keep it flowy but fix run-on sentences.
+3. **Refine formatting:**
+   - Remove disfluencies (um, uh, like).
+   - Fix punctuation and capitalization.
+   - Maintain the original "voice" and "intent" but make it look professional.
+
+Output ONLY the final refined text. Do not add conversational filler like "Here is the text:".`
             }],
         });
 
