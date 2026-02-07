@@ -1,7 +1,11 @@
 'use client';
 import React, { useEffect } from 'react';
+import { useVoiceStore } from '@/stores/voice-store';
 
 export default function OverlayPage() {
+    const { rawTranscript, refinedText, errorMessage, refinementError, recordingState } = useVoiceStore();
+    const isRefining = recordingState === 'processing';
+
     useEffect(() => {
         // Double check for transparency
         document.body.style.background = 'transparent';
@@ -51,14 +55,28 @@ export default function OverlayPage() {
                     <div className="wave-bar" style={{ animationDelay: '50ms', height: '18px' }}></div>
                 </div>
 
-                <span style={{ fontWeight: 700, fontSize: '24px', letterSpacing: '0.02em', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                    Listening...
-                </span>
+                <div className="flex flex-col items-center">
+                    <span style={{ fontWeight: 700, fontSize: '24px', letterSpacing: '0.02em', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                        {errorMessage || refinementError ? (
+                            <span style={{ color: '#ef4444' }}>{refinementError || errorMessage || 'Error'}</span>
+                        ) : isRefining ? (
+                            <span style={{ color: '#fbbf24' }}>Refining...</span>
+                        ) : (
+                            <span>Listening...</span>
+                        )}
+                    </span>
+                    {/* Show live transcript preview if available */}
+                    {(rawTranscript || refinedText) && (
+                        <div style={{ maxWidth: '400px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', fontSize: '14px', opacity: 0.8, marginTop: '4px' }}>
+                            {refinedText || rawTranscript}
+                        </div>
+                    )}
+                </div>
 
                 <style>{`
                     .wave-bar {
                         width: 6px;
-                        background-color: #ef4444; /* bright red */
+                        background-color: ${errorMessage || refinementError ? '#ef4444' : '#ef4444'}; /* bright red */
                         border-radius: 99px;
                         animation: pulse-height 1s ease-in-out infinite;
                     }

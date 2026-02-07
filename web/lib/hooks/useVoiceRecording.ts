@@ -147,12 +147,14 @@ export function useVoiceRecording() {
                     // Only try to refine if we're NOT in Electron (web version with API server)
                     try {
                         console.log('[Hook] Web environment, refining transcript...');
+                        useVoiceStore.getState().setRefinementError(null); // Clear previous error
                         const refined = await refineTranscription(currentRaw);
                         console.log('[Hook] Refined transcript length:', refined.length);
                         useVoiceStore.getState().setRefinedText(refined);
                         textToInject = refined;
-                    } catch (refineError) {
-                        console.warn('[Hook] Refinement failed, using raw transcript:', refineError);
+                    } catch (refineError: any) {
+                        console.error('[Hook] Refinement failed, using raw transcript:', refineError);
+                        useVoiceStore.getState().setRefinementError(refineError.message || 'Refinement Failed');
                         useVoiceStore.getState().setRefinedText(currentRaw);
                     }
                 } else {
