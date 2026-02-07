@@ -12,9 +12,11 @@ interface DashboardProps {
     };
     lastTranscript: string;
     refinedTranscript?: string;
+    isRefining?: boolean;
+    refinementError?: string | null;
 }
 
-export function Dashboard({ stats, lastTranscript, refinedTranscript }: DashboardProps) {
+export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining, refinementError }: DashboardProps) {
     const totalMinutes = Math.floor(stats.totalDictationTimeMs / 60000);
 
     // Calculate Personalization Score
@@ -38,9 +40,11 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript }: Dashboar
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                {/* ... existing stat cards ... */}
+
+                {/* (Keeping existing cards exactly as they are) */}
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center items-center h-32 hover:shadow-md transition-shadow" title="Your personalization score increases as you add dictionary words and use the app.">
                     <div className="relative w-20 h-20 mb-2">
-                        {/* Simple placeholder for circular progress */}
                         <div className="w-full h-full rounded-full border-4 border-blue-100"></div>
                         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center font-bold text-gray-900 text-xl">
                             {personalizationScore}%
@@ -49,7 +53,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript }: Dashboar
                     <div className="text-xs text-gray-500">Overall personalization</div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow" title="The number of times the AI had to fix your text or when you manually refined it.">
+                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-2 mb-2">
                         <Type size={18} className="text-gray-400" />
                         <span className="text-2xl font-bold text-gray-900">{(stats.correctionsCount || 0)}</span>
@@ -57,7 +61,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript }: Dashboar
                     <div className="text-sm text-gray-500">Corrections made</div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow" title="Total words dictated this week.">
+                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-2 mb-2">
                         <BarChart size={18} className="text-gray-400" />
                         <span className="text-2xl font-bold text-gray-900">{(stats.wordsThisWeek || 0).toLocaleString()}</span>
@@ -65,7 +69,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript }: Dashboar
                     <div className="text-sm text-gray-500">Words (This Week)</div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow" title="Total usage time since installation.">
+                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-2 mb-2">
                         <Clock size={18} className="text-gray-400" />
                         <span className="text-2xl font-bold text-gray-900">{totalMinutes} min</span>
@@ -96,8 +100,12 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript }: Dashboar
 
             {/* Last Transcript */}
             <div className="mt-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Last transcript</h3>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 min-h-[100px] text-gray-600 whitespace-pre-wrap">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-900">Last transcript</h3>
+                    {isRefining && <span className="text-xs text-atom-amber animate-pulse">✨ Refining...</span>}
+                    {refinementError && <span className="text-xs text-vault-rust">⚠️ Refinement Failed</span>}
+                </div>
+                <div className={`bg-gray-50 p-4 rounded-xl border min-h-[100px] text-gray-600 whitespace-pre-wrap transition-colors ${refinementError ? 'border-vault-rust/30' : 'border-gray-200'} ${isRefining ? 'opacity-70' : ''}`}>
                     {refinedTranscript || lastTranscript || 'No transcript yet. Try dictating something!'}
                 </div>
             </div>

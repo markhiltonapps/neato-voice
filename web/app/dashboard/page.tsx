@@ -99,7 +99,10 @@ export default function AppDashboard() {
                     {activeTab === 'home' && (
                         <Dashboard
                             stats={stats}
-                            lastTranscript={refinedText || rawTranscript}
+                            lastTranscript={rawTranscript}
+                            refinedTranscript={refinedText}
+                            isRefining={recordingState === 'processing'}
+                            refinementError={null} // We need to expose error state from store
                         />
                     )}
                     {activeTab === 'dictionary' && (
