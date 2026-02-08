@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
                 content: `You are a transcription formatter. Your ONLY job is to:
 1. Remove filler words (um, uh, ah, like, you know)
 2. Fix grammar and punctuation
-3. **FORMAT LISTS AS BULLETS** - This is CRITICAL
+3. **FORMAT LISTS AS BULLETS** - This is CRITICAL.
+4. **APPEND MARKER**: You MUST append " [AI]" to the very end of your response so we know you processed it.
 
 WHEN TO CREATE BULLET LISTS:
 - If you see 2+ items separated by commas or "and", YOU MUST format as bullets
