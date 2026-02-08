@@ -111,7 +111,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
             </div>
 
             <div className="mt-8 text-xs text-gray-400">
-                Version 1.0.12 (Local) • Check for updates
+                Version 1.0.12 • Check for updates
             </div>
         </div>
     );

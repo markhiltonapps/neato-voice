@@ -143,10 +143,14 @@ export function useVoiceRecording() {
                 const api = getElectronAPI();
                 console.log('[Hook] Protocol:', window.location.protocol, 'Has electronAPI:', !!api);
 
-                if (!api) {
-                    // Only try to refine if we're NOT in Electron (web version with API server)
+                // Force usage of Web API for refinement to ensure latest logic (with bullets) is used
+                // regardless of the installed Electron version.
+                const FORCE_WEB_REFINEMENT = true;
+
+                if (!api || FORCE_WEB_REFINEMENT) {
+                    // Use Web API for refinement
                     try {
-                        console.log('[Hook] Web environment, refining transcript...');
+                        console.log('[Hook] Refining transcript via Web API (forced)...');
                         useVoiceStore.getState().setRefinementError(null); // Clear previous error
                         const refined = await refineTranscription(currentRaw);
                         console.log('[Hook] Refined transcript length:', refined.length);
