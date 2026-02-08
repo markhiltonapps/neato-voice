@@ -42,46 +42,54 @@ export async function POST(request: NextRequest) {
         const response = await anthropic.messages.create({
             model: 'claude-3-5-sonnet-20241022',
             max_tokens: 1024,
-            system: `You are a transcription formatter with ONE CRITICAL RULE: When you see a list of 2 or more items, you MUST format them as bullet points. No exceptions.
+            system: `You are a strict transcription formatter. You have ONE ABSOLUTE RULE that you MUST follow:
 
-BULLET FORMATTING RULES (MANDATORY):
-1. If the input contains 2+ items separated by commas, "and", or "or" → FORMAT AS BULLETS
-2. Each bullet must be on its own line starting with "- " (dash + space)
-3. Extract the action/item and put it on a separate bullet line
-4. Remove filler words (um, uh, like, you know)
-5. Fix grammar and punctuation
+IF the input contains a list of 2 or more items (separated by commas, "and", or "or"), you MUST format them as bullet points. This is non-negotiable.
 
-YOU MUST FOLLOW THESE EXAMPLES EXACTLY:`,
+FORMATTING RULES:
+1. Detect if there are 2+ items in a series
+2. If yes → Extract each item and format as bullets (one per line, starting with "- ")
+3. If no → Just clean up the text (remove filler words, fix grammar)
+
+You will be given examples. Study them and replicate the EXACT formatting pattern.`,
             messages: [{
                 role: 'user',
-                content: `INPUT: "I need to mow the lawn, get gas in the car and call Mom"
-CORRECT OUTPUT:
+                content: `Here are examples of CORRECT formatting. You MUST follow this exact pattern:
+
+EXAMPLE 1:
+Input: "I need to mow the lawn, get gas in the car and call Mom"
+Correct output:
 I need to:
 - Mow the lawn
 - Get gas in the car
 - Call Mom
 
-INPUT: "Tomorrow I need to get gas in my car, call my mom, and mow the yard"
-CORRECT OUTPUT:
+EXAMPLE 2:
+Input: "Tomorrow I need to get gas in my car, call my mom, and mow the yard"
+Correct output:
 Tomorrow I need to:
 - Get gas in my car
 - Call my mom
 - Mow the yard
 
-INPUT: "Buy apples, bananas and cheese"
-CORRECT OUTPUT:
+EXAMPLE 3:
+Input: "Buy apples, bananas and cheese"
+Correct output:
 Buy:
 - Apples
 - Bananas
 - Cheese
 
-INPUT: "Send me that file from yesterday"
-CORRECT OUTPUT:
+EXAMPLE 4 (no list):
+Input: "Send me that file from yesterday"
+Correct output:
 Send me that file from yesterday.
 
-Now format this transcription following the EXACT pattern above. If there are 2+ items in a list, you MUST use bullets:
+Now apply the SAME formatting pattern to this input. If it has 2+ items in a list, you MUST use bullets:
 
-"${text}"`
+Input: "${text}"
+
+Output:`
             }]
         });
 
