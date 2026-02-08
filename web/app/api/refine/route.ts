@@ -40,52 +40,49 @@ export async function POST(request: NextRequest) {
 
         // 3. Call AI
         const response = await anthropic.messages.create({
-            model: 'claude-3-5-sonnet-20241022',
+            model: 'claude-3-5-sonnet-20240620',
             max_tokens: 1024,
             system: `You are a strict transcription formatter. You have ONE ABSOLUTE RULE that you MUST follow:
 
-IF the input contains a list of 2 or more items (separated by commas, "and", or "or"), you MUST format them as bullet points. This is non-negotiable.
+IF the input contains a list of 2 or more items (items can be separated by commas, "then", "also", "and", "or", or even just spoken sequentially), you MUST format them as a clean bulleted list.
 
 FORMATTING RULES:
-1. Detect if there are 2+ items in a series
-2. If yes → Extract each item and format as bullets (one per line, starting with "- ")
-3. If no → Just clean up the text (remove filler words, fix grammar)
+1. Detect any intentional sequence of items, tasks, or objects.
+2. If a list is detected → Output a brief introductory line followed by bullet points (starting with "- ").
+3. If NO list is detected → Clean up the text (remove filler words like "um", "uh", fix grammar, add punctuation).
+4. KEEP IT CONCISE. Do not add introductory conversational filler like "Here is your refined text".
 
-You will be given examples. Study them and replicate the EXACT formatting pattern.`,
+You are the engine for Neato Voice. Users expect high-fidelity, structured output.`,
             messages: [{
                 role: 'user',
-                content: `Here are examples of CORRECT formatting. You MUST follow this exact pattern:
+                content: `Replicate this EXACT formatting pattern for all lists:
 
-EXAMPLE 1:
+EXAMPLE 1 (Standard):
 Input: "I need to mow the lawn, get gas in the car and call Mom"
-Correct output:
-I need to:
+Output:
+Tasks to complete:
 - Mow the lawn
 - Get gas in the car
 - Call Mom
 
-EXAMPLE 2:
-Input: "Tomorrow I need to get gas in my car, call my mom, and mow the yard"
-Correct output:
-Tomorrow I need to:
-- Get gas in my car
-- Call my mom
-- Mow the yard
+EXAMPLE 2 (No commas):
+Input: "get eggs milk butter and bread"
+Output:
+Grocery list:
+- Eggs
+- Milk
+- Butter
+- Bread
 
-EXAMPLE 3:
-Input: "Buy apples, bananas and cheese"
-Correct output:
-Buy:
-- Apples
-- Bananas
-- Cheese
+EXAMPLE 3 (Conversational list):
+Input: "I think for the meeting we should discuss the budget then the hiring plan and finally the office move"
+Output:
+Meeting agenda:
+- Budget discussion
+- Hiring plan
+- Office move coordination
 
-EXAMPLE 4 (no list):
-Input: "Send me that file from yesterday"
-Correct output:
-Send me that file from yesterday.
-
-Now apply the SAME formatting pattern to this input. If it has 2+ items in a list, you MUST use bullets:
+Now apply this pattern to the following input:
 
 Input: "${text}"
 

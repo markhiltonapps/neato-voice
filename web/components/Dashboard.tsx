@@ -143,11 +143,25 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
                         </span>
                     )}
                 </div>
-                <div className={`bg-surface-1/50 backdrop-blur-sm p-6 rounded-2xl border min-h-[120px] text-text-primary whitespace-pre-wrap transition-all shadow-inner ${refinementError ? 'border-accent-red/30 bg-accent-red/5' : 'border-surface-2'
+                <div className={`bg-surface-1/50 backdrop-blur-sm p-6 rounded-2xl border min-h-[120px] text-text-primary transition-all shadow-inner ${refinementError ? 'border-accent-red/30 bg-accent-red/5' : 'border-surface-2'
                     } ${isRefining ? 'opacity-70' : ''}`}>
                     {refinedTranscript ? (
-                        <div className="prose prose-invert max-w-none">
-                            {refinedTranscript}
+                        <div className="max-w-none space-y-2">
+                            {refinedTranscript.split('\n').map((line, i) => {
+                                if (line.trim().startsWith('- ')) {
+                                    return (
+                                        <div key={i} className="flex items-start gap-3 pl-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-accent-blue mt-2 shrink-0 shadow-[0_0_8px_rgba(72,149,239,0.8)]" />
+                                            <span className="text-sm sm:text-base leading-relaxed">{line.trim().substring(2)}</span>
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <p key={i} className={`text-sm sm:text-base leading-relaxed ${line.trim() === '' ? 'h-2' : ''}`}>
+                                        {line}
+                                    </p>
+                                );
+                            })}
                         </div>
                     ) : lastTranscript ? (
                         <p>{lastTranscript}</p>
