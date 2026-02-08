@@ -343,14 +343,41 @@ const HowItWorks = () => (
 
 const Pricing = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubscribe = (tier: 'free' | 'pro') => {
+  const handleSubscribe = async (tier: 'free' | 'pro') => {
     if (tier === 'free') {
       router.push('/signup');
     } else {
-      // TODO: Integrate with Stripe checkout
-      router.push('/signup?plan=pro&billing=' + billingPeriod);
+      setLoading(true);
+      try {
+        // Create Stripe checkout session
+        const response = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            billingPeriod,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to create checkout session');
+        }
+
+        // Redirect to Stripe Checkout
+        if (data.url) {
+          window.location.href = data.url;
+        }
+      } catch (error: any) {
+        console.error('Checkout error:', error);
+        alert('Failed to start checkout. Please try again or sign in first.');
+        setLoading(false);
+      }
     }
   };
 
