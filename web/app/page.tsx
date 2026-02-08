@@ -350,15 +350,24 @@ const Pricing = () => {
     if (tier === 'free') {
       router.push('/signup');
     } else {
+      // Prompt for email before checkout
+      const email = prompt('Please enter your email address to continue:');
+
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
       setLoading(true);
       try {
-        // Create Stripe checkout session
-        const response = await fetch('/api/stripe/checkout', {
+        // Create Stripe guest checkout session
+        const response = await fetch('/api/stripe/checkout-guest', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            email,
             billingPeriod,
           }),
         });
@@ -375,7 +384,7 @@ const Pricing = () => {
         }
       } catch (error: any) {
         console.error('Checkout error:', error);
-        alert('Failed to start checkout. Please try again or sign in first.');
+        alert('Failed to start checkout. Please try again.');
         setLoading(false);
       }
     }

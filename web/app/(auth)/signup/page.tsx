@@ -17,6 +17,8 @@ export default function SignupPage() {
     const [fullName, setFullName] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+    const [stripeSessionId, setStripeSessionId] = useState<string | null>(null);
     const router = useRouter();
 
     // Onboarding responses
@@ -27,13 +29,39 @@ export default function SignupPage() {
         role: ""
     });
 
+    // Check for post-checkout flow
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const checkout = params.get('checkout');
+        const sessionId = params.get('session_id');
+
+        if (checkout === 'success' && sessionId) {
+            // User just completed checkout - retrieve session and pre-fill email
+            setCheckoutSuccess(true);
+            setStripeSessionId(sessionId);
+            setStep(5); // Skip to signup form
+
+            // Fetch session details from Stripe
+            fetch(`/api/stripe/session?session_id=${sessionId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.email) {
+                        setEmail(data.email);
+                    }
+                })
+                .catch(err => {
+                    console.error('Failed to retrieve session:', err);
+                });
+        }
+    }, []);
+
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
         const supabase = createClient();
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data: authData, error: signUpError } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -48,7 +76,27 @@ export default function SignupPage() {
             setError(signUpError.message);
             setLoading(false);
         } else {
-            setStep(6); // Move to paywall
+            // If this is post-checkout signup, link the Stripe session to the user
+            if (checkoutSuccess && stripeSessionId && authData.user) {
+                try {
+                    // Update the webhook with the user ID by triggering a session update
+                    await fetch('/api/stripe/link-customer', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sessionId: stripeSessionId,
+                            userId: authData.user.id
+                        })
+                    });
+                } catch (err) {
+                    console.error('Failed to link customer:', err);
+                }
+
+                // Auto-login and redirect to dashboard with success message
+                router.push('/dashboard?welcome=true&checkout=success');
+            } else {
+                setStep(6); // Move to paywall
+            }
             setLoading(false);
         }
     };
@@ -155,12 +203,28 @@ export default function SignupPage() {
                             exit={{ opacity: 0, y: -20 }}
                             className="bg-surface-1/80 backdrop-blur-xl p-8 rounded-2xl border border-surface-2 shadow-2xl"
                         >
+                            {checkoutSuccess && (
+                                <div className="mb-6 bg-accent-blue/10 border border-accent-blue/30 rounded-xl p-4 flex items-start gap-3">
+                                    <CheckCircle2 className="w-5 h-5 text-accent-blue mt-0.5 flex-shrink-0" />
+                                    <div>
+                                        <p className="font-semibold text-sm mb-1">Payment Successful! 🎉</p>
+                                        <p className="text-xs text-text-secondary">
+                                            We've pre-filled your email. Complete your account to access your Pro subscription.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="text-center mb-10">
                                 <div className="w-16 h-16 bg-accent-blue/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-accent-blue/30 shadow-[0_0_30px_rgba(72,149,239,0.2)]">
                                     <Mic className="w-8 h-8 text-accent-blue" />
                                 </div>
-                                <h1 className="text-3xl font-display font-bold mb-2">Final Step: Create Account</h1>
-                                <p className="text-text-secondary">Save your progress and start your trial.</p>
+                                <h1 className="text-3xl font-display font-bold mb-2">
+                                    {checkoutSuccess ? 'Complete Your Account' : 'Final Step: Create Account'}
+                                </h1>
+                                <p className="text-text-secondary">
+                                    {checkoutSuccess ? "You're almost there! Create your password to get started." : 'Save your progress and start your trial.'}
+                                </p>
                             </div>
 
                             <form onSubmit={handleSignup} className="space-y-6">
@@ -184,7 +248,9 @@ export default function SignupPage() {
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="Email Address"
-                                            className="w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all"
+                                            readOnly={checkoutSuccess}
+                                            disabled={checkoutSuccess}
+                                            className={`w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all ${checkoutSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
                                         />
                                     </div>
                                     <div className="relative">
