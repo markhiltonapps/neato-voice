@@ -160,17 +160,59 @@ const Hero = () => {
           transition={{ delay: 0.8 }}
           className="relative mx-auto max-w-4xl p-2 bg-surface-1/30 rounded-xl border border-white/10 backdrop-blur-sm shadow-2xl"
         >
-          {/* Placeholder for App Interface or abstract visual */}
-          <div className="aspect-[16/9] bg-bg-secondary rounded-lg overflow-hidden relative flex items-center justify-center group">
+          <div className="bg-bg-secondary rounded-lg overflow-hidden relative p-8 sm:p-12">
             <div className="absolute inset-0 bg-gradient-to-tr from-bg-primary to-surface-2 opacity-80" />
-            <div className="relative z-10 text-center space-y-4">
-              <div className="inline-flex p-4 rounded-full bg-accent-red/20 text-accent-red mb-2 animate-pulse">
-                <Mic className="w-8 h-8" />
+
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              {/* Left: Raw Input */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-accent-red/20 text-accent-red animate-pulse">
+                    <Mic className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-mono text-text-muted uppercase tracking-widest">Raw Audio Input</span>
+                </div>
+                <div className="p-6 rounded-xl bg-surface-1/50 border border-white/5 text-text-secondary italic leading-relaxed text-sm sm:text-base">
+                  "Um, okay, so... for next week, uh, I think I need to email the client about the new project, then we have that team sync on Tuesday at 10, and, uh, oh, I have to finish the slide deck for Friday."
+                </div>
               </div>
-              <div className="text-2xl font-display font-bold">"Generate a summary of the Q3 marketing plan..."</div>
-              <ArrowRight className="w-6 h-6 mx-auto text-text-secondary rotate-90" />
-              <div className="text-lg font-mono text-accent-green bg-surface-1/80 px-4 py-2 rounded-lg border border-accent-green/20">
-                &gt; Q3 Marketing Plan Summary generated.
+
+              {/* Middle: Arrow (Hidden on mobile) */}
+              <div className="hidden md:flex flex-col items-center justify-center">
+                <motion.div
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="p-3 rounded-full bg-accent-blue/10 text-accent-blue"
+                >
+                  <ArrowRight className="w-6 h-6" />
+                </motion.div>
+                <span className="text-[10px] font-mono text-accent-blue mt-2 uppercase tracking-tighter">AI Refinement</span>
+              </div>
+
+              {/* Right: Refined Output */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-state-success/20 text-state-success">
+                    <Wand2 className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-mono text-text-muted uppercase tracking-widest">Refined for Action</span>
+                </div>
+                <div className="p-6 rounded-xl bg-surface-hover/80 border border-accent-blue/20 text-text-primary shadow-[0_0_20px_rgba(72,149,239,0.1)]">
+                  <ul className="space-y-3 text-sm sm:text-base">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent-blue mt-2 shrink-0" />
+                      <span>Email client regarding project proposal</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent-blue mt-2 shrink-0" />
+                      <span>Team sync: Tuesday @ 10:00 AM</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent-blue mt-2 shrink-0" />
+                      <span>Complete slide deck by Friday</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
