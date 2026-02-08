@@ -1,6 +1,5 @@
 import React from 'react';
-import { Clock, Type, Zap, BarChart, UserPlus, Megaphone } from 'lucide-react';
-import { StatCard } from './StatCard';
+import { Clock, Type, Zap, BarChart, UserPlus, Megaphone, ArrowRight } from 'lucide-react';
 
 interface DashboardProps {
     stats: {
@@ -20,7 +19,6 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
     const totalMinutes = Math.floor(stats.totalDictationTimeMs / 60000);
 
     // Calculate Personalization Score
-    // (Dictionary * 5) + (Corrections * 2) + (Words / 100) -> Max 100
     const dictScore = (stats.dictionarySize || 0) * 5;
     const correctionScore = (stats.correctionsCount || 0) * 2;
     const usageScore = Math.floor(stats.totalWords / 100);
@@ -29,94 +27,142 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
     const wpm = totalMinutes > 0 ? Math.round(stats.totalWords / totalMinutes) : 0;
 
     return (
-        <div className="p-8 bg-white h-full overflow-y-auto">
+        <div className="w-full text-text-primary">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Speak naturally, write perfectly – in any app</h1>
-                <p className="text-gray-600">
-                    Hold down the <kbd className="bg-gray-100 border border-gray-300 rounded px-1.5 py-0.5 text-sm font-mono text-gray-800">Ctrl+Shift+Space</kbd> key, speak, and let go to insert spoken text.
+                <h1 className="text-3xl font-bold font-display text-white mb-2 tracking-tight">
+                    Speak naturally, <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-blue to-accent-cyan">write perfectly</span>.
+                </h1>
+                <p className="text-text-secondary text-lg max-w-2xl">
+                    Hold <kbd className="bg-surface-2 border border-surface-3 rounded px-2 py-0.5 text-sm font-mono text-accent-cyan shadow-sm">Ctrl+Shift+Space</kbd> to start dictating in any application.
                 </p>
             </div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                {/* ... existing stat cards ... */}
-
-                {/* (Keeping existing cards exactly as they are) */}
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center items-center h-32 hover:shadow-md transition-shadow" title="Your personalization score increases as you add dictionary words and use the app.">
-                    <div className="relative w-20 h-20 mb-2">
-                        <div className="w-full h-full rounded-full border-4 border-blue-100"></div>
-                        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center font-bold text-gray-900 text-xl">
+                {/* Personalization Score */}
+                <div className="bg-surface-1 p-5 rounded-2xl border border-surface-2 shadow-lg relative overflow-hidden group hover:border-accent-blue/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Zap size={48} className="text-accent-blue" />
+                    </div>
+                    <div className="flex flex-col justify-between h-full">
+                        <div className="text-3xl font-bold font-display text-white mb-1">
                             {personalizationScore}%
                         </div>
+                        <div className="text-sm text-text-secondary font-medium">Personalization Score</div>
+                        <div className="w-full bg-surface-3 h-1.5 rounded-full mt-3 overflow-hidden">
+                            <div className="bg-gradient-to-r from-accent-blue to-accent-cyan h-full rounded-full" style={{ width: `${personalizationScore}%` }} />
+                        </div>
                     </div>
-                    <div className="text-xs text-gray-500">Overall personalization</div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Type size={18} className="text-gray-400" />
-                        <span className="text-2xl font-bold text-gray-900">{(stats.correctionsCount || 0)}</span>
+                {/* Corrections */}
+                <div className="bg-surface-1 p-5 rounded-2xl border border-surface-2 shadow-lg relative overflow-hidden group hover:border-accent-red/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Type size={48} className="text-accent-red" />
                     </div>
-                    <div className="text-sm text-gray-500">Corrections made</div>
+                    <div className="flex flex-col justify-between h-full">
+                        <div className="text-3xl font-bold font-display text-white mb-1">
+                            {stats.correctionsCount || 0}
+                        </div>
+                        <div className="text-sm text-text-secondary font-medium">Corrections Learned</div>
+                    </div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-2 mb-2">
-                        <BarChart size={18} className="text-gray-400" />
-                        <span className="text-2xl font-bold text-gray-900">{(stats.wordsThisWeek || 0).toLocaleString()}</span>
+                {/* Words This Week */}
+                <div className="bg-surface-1 p-5 rounded-2xl border border-surface-2 shadow-lg relative overflow-hidden group hover:border-accent-gold/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <BarChart size={48} className="text-accent-gold" />
                     </div>
-                    <div className="text-sm text-gray-500">Words (This Week)</div>
+                    <div className="flex flex-col justify-between h-full">
+                        <div className="text-3xl font-bold font-display text-white mb-1">
+                            {(stats.wordsThisWeek || 0).toLocaleString()}
+                        </div>
+                        <div className="text-sm text-text-secondary font-medium">Words This Week</div>
+                    </div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center h-32 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Clock size={18} className="text-gray-400" />
-                        <span className="text-2xl font-bold text-gray-900">{totalMinutes} min</span>
+                {/* Time Saved */}
+                <div className="bg-surface-1 p-5 rounded-2xl border border-surface-2 shadow-lg relative overflow-hidden group hover:border-accent-cyan/30 transition-all">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Clock size={48} className="text-accent-cyan" />
                     </div>
-                    <div className="text-sm text-gray-500">Total dictation time</div>
+                    <div className="flex flex-col justify-between h-full">
+                        <div className="text-3xl font-bold font-display text-white mb-1">
+                            {totalMinutes} min
+                        </div>
+                        <div className="text-sm text-text-secondary font-medium">Time Saved</div>
+                    </div>
                 </div>
             </div>
 
             {/* Banners */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div className="bg-blue-50 p-6 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <h3 className="font-bold text-gray-900 mb-1">Refer friends</h3>
-                        <p className="text-sm text-gray-600 mb-3">Get $5 credit for Neato Pro for every invite.</p>
-                        <button disabled className="bg-gray-100 text-gray-400 px-4 py-1.5 rounded-lg text-sm font-medium shadow-none cursor-not-allowed">Coming Soon</button>
+                <div className="bg-gradient-to-br from-accent-blue/10 to-surface-1 border border-accent-blue/20 p-6 rounded-2xl flex items-center justify-between relative overflow-hidden group">
+                    <div className="relative z-10">
+                        <h3 className="font-bold text-white mb-1 flex items-center gap-2">
+                            Refer Friends <span className="text-[10px] bg-accent-blue text-white px-1.5 py-0.5 rounded font-mono uppercase">Coming Soon</span>
+                        </h3>
+                        <p className="text-sm text-text-secondary mb-4 max-w-xs">Get $5 credit for Neato Pro for every invite you send.</p>
+                        <button disabled className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1 cursor-not-allowed">
+                            Join Waitlist <ArrowRight size={12} />
+                        </button>
                     </div>
-                    <UserPlus size={48} className="text-blue-200" />
+                    <UserPlus size={64} className="text-accent-blue/20 absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform" />
                 </div>
-                <div className="bg-orange-50 p-6 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <h3 className="font-bold text-gray-900 mb-1">Affiliate program</h3>
-                        <p className="text-sm text-gray-600 mb-3">Earn 25% recurring commission for sharing Neato.</p>
-                        <button disabled className="bg-gray-100 text-gray-400 px-4 py-1.5 rounded-lg text-sm font-medium shadow-none cursor-not-allowed">Coming Soon</button>
+
+                <div className="bg-gradient-to-br from-accent-gold/10 to-surface-1 border border-accent-gold/20 p-6 rounded-2xl flex items-center justify-between relative overflow-hidden group">
+                    <div className="relative z-10">
+                        <h3 className="font-bold text-white mb-1 flex items-center gap-2">
+                            Affiliate Program <span className="text-[10px] bg-accent-gold text-bg-primary px-1.5 py-0.5 rounded font-mono uppercase">Coming Soon</span>
+                        </h3>
+                        <p className="text-sm text-text-secondary mb-4 max-w-xs">Earn 25% recurring commission for sharing Neato.</p>
+                        <button disabled className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1 cursor-not-allowed">
+                            Apply Now <ArrowRight size={12} />
+                        </button>
                     </div>
-                    <Megaphone size={48} className="text-orange-200" />
+                    <Megaphone size={64} className="text-accent-gold/20 absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform" />
                 </div>
             </div>
 
             {/* Last Transcript */}
-            <div className="mt-8">
+            <div className="mt-4">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-900">Last transcript</h3>
+                    <h3 className="text-lg font-bold text-white font-display">Recent Activity</h3>
                     {isRefining ? (
-                        <span className="text-xs text-blue-600 font-bold animate-pulse">✨ AI Refining...</span>
+                        <span className="text-xs text-accent-cyan font-bold animate-pulse flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-accent-cyan rounded-full animate-ping" /> AI Refining...
+                        </span>
                     ) : refinementError ? (
-                        <span className="text-xs text-red-600 font-bold">⚠️ Error: {refinementError}</span>
+                        <span className="text-xs text-accent-red font-bold flex items-center gap-1">
+                            ⚠️ Error
+                        </span>
                     ) : (
-                        <span className="text-xs text-green-600 font-bold">✓ Ready</span>
+                        <span className="text-xs text-state-success font-bold flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-state-success rounded-full" /> Ready
+                        </span>
                     )}
                 </div>
-                <div className={`bg-gray-50 p-4 rounded-xl border min-h-[100px] text-gray-600 whitespace-pre-wrap transition-colors ${refinementError ? 'border-vault-rust/30' : 'border-gray-200'} ${isRefining ? 'opacity-70' : ''}`}>
-                    {refinedTranscript || lastTranscript || 'No transcript yet. Try dictating something!'}
+                <div className={`bg-surface-1/50 backdrop-blur-sm p-6 rounded-2xl border min-h-[120px] text-text-primary whitespace-pre-wrap transition-all shadow-inner ${refinementError ? 'border-accent-red/30 bg-accent-red/5' : 'border-surface-2'
+                    } ${isRefining ? 'opacity-70' : ''}`}>
+                    {refinedTranscript ? (
+                        <div className="prose prose-invert max-w-none">
+                            {refinedTranscript}
+                        </div>
+                    ) : lastTranscript ? (
+                        <p>{lastTranscript}</p>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-text-muted py-8 opactiy-50">
+                            <p className="italic">"No dictation yet. Speak something amazing!"</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div className="mt-8 text-xs text-gray-400">
-                Version 1.0.12 • Check for updates
+            <div className="mt-12 text-center">
+                <p className="text-xs text-text-muted font-mono uppercase tracking-widest">
+                    Neato Voice v1.0.12 • <span className="hover:text-accent-blue cursor-pointer transition-colors">Check for Updates</span>
+                </p>
             </div>
         </div>
     );

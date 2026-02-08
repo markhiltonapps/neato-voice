@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, History, Book, Crown, HelpCircle } from 'lucide-react';
+import { Home, History, Book, Crown, HelpCircle, Settings } from 'lucide-react';
 
 interface SidebarProps {
     activeTab: string;
@@ -15,12 +15,16 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     ];
 
     return (
-        <div className="w-64 h-full bg-[#f8f9fa] border-r border-gray-200 flex flex-col p-4">
-            <div className="flex items-center gap-2 mb-8 px-2">
-                {/* Logo placeholder - replace with actual logo if available */}
-                <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold">NV</div>
-                <span className="text-xl font-bold text-gray-900">Neato Voice</span>
-                <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded ml-2">Pro Trial</span>
+        <div className="w-64 h-full bg-bg-secondary border-r border-surface-2 flex flex-col p-4 font-body">
+            <div className="flex items-center gap-3 mb-10 px-2 mt-2">
+                {/* Logo */}
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-red to-accent-blue flex items-center justify-center text-white font-bold font-display shadow-lg shadow-accent-blue/20">
+                    NV
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-lg font-bold text-text-primary font-display tracking-tight">Neato Voice</span>
+                    <span className="text-[10px] uppercase tracking-wider text-accent-cyan font-mono">Enterprise AI</span>
+                </div>
             </div>
 
             <nav className="flex-1 space-y-1">
@@ -28,46 +32,50 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                     <button
                         key={item.id}
                         onClick={() => setActiveTab(item.id)}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === item.id
-                            ? 'bg-gray-200 text-gray-900'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === item.id
+                                ? 'bg-surface-hover text-white shadow-lg shadow-surface-hover/50 border border-surface-3'
+                                : 'text-text-secondary hover:bg-surface-1 hover:text-text-primary'
                             }`}
                     >
-                        <item.icon size={18} />
+                        <item.icon size={18} className={activeTab === item.id ? 'text-accent-blue' : 'opacity-70'} />
                         {item.label}
                     </button>
                 ))}
             </nav>
 
             {/* Pro Trial Widget */}
-            <div className="mt-auto bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-                <div className="flex justify-between items-start mb-2">
-                    <span className="text-sm font-semibold text-gray-900">Pro Trial</span>
+            <div className="mt-auto bg-surface-1/50 p-4 rounded-xl border border-surface-2 backdrop-blur-sm relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                <div className="flex justify-between items-start mb-3 relative z-10">
+                    <span className="text-xs font-bold text-text-primary font-mono uppercase tracking-wider flex items-center gap-1">
+                        <Crown size={12} className="text-accent-gold" /> Pro Trial
+                    </span>
+                    <span className="text-[10px] text-accent-gold bg-accent-gold/10 px-1.5 py-0.5 rounded border border-accent-gold/20">
+                        29 DAYS LEFT
+                    </span>
                 </div>
-                <div className="mb-2">
-                    <div className="text-xs text-gray-500 mb-1">1 of 30 days used</div>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
-                        <div className="bg-black h-1.5 rounded-full" style={{ width: '3.3%' }}></div>
+
+                <div className="mb-3 relative z-10">
+                    <div className="w-full bg-surface-3 rounded-full h-1.5 overflow-hidden">
+                        <div className="bg-gradient-to-r from-accent-blue to-accent-cyan h-1.5 rounded-full w-[3.3%]" />
                     </div>
                 </div>
-                <p className="text-xs text-gray-500 mb-3">Upgrade to Neato Pro before your trial ends</p>
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition-colors">
-                    Upgrade
+
+                <button className="w-full bg-accent-blue hover:bg-accent-blue/90 text-white text-xs font-bold uppercase tracking-wide py-2 rounded-lg transition-all shadow-lg shadow-accent-blue/20 hover:shadow-accent-blue/40 relative z-10 hover:-translate-y-0.5">
+                    Upgrade Now
                 </button>
             </div>
 
-            <div className="mt-4 flex flex-col gap-1 text-gray-400 px-1 border-t border-gray-200 pt-4">
+            <div className="mt-4 flex flex-col gap-1 border-t border-surface-2 pt-4">
                 <button
                     onClick={() => setActiveTab('settings')}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'settings'
-                        ? 'bg-gray-200 text-gray-900'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                            ? 'bg-surface-hover text-white'
+                            : 'text-text-secondary hover:bg-surface-1 hover:text-text-primary'
                         }`}
                 >
-                    <div className="flex items-center justify-center">
-                        {/* Placeholder for imported Settings icon - assuming NavItems approach, but manual here is fine */}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
-                    </div>
+                    <Settings size={18} className={activeTab === 'settings' ? 'text-accent-blue' : 'opacity-70'} />
                     Settings
                 </button>
             </div>

@@ -1,21 +1,26 @@
 import type { Metadata } from "next";
-import { Share_Tech_Mono, Jost } from "next/font/google";
+import { Space_Grotesk, DM_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const shareTechMono = Share_Tech_Mono({
-  weight: ['400'],
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-share-tech',
+  variable: '--font-display',
 });
 
-const jost = Jost({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-jost',
+  variable: '--font-body',
+});
+
+const spaceMono = Space_Mono({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
   title: "Neato Voice | Future of Business AI",
-  description: "Enterprise-grade intelligence for the modern industrial age.",
+  description: "AI Tools That Actually Work For Your Business.",
 };
 
 export default function RootLayout({
@@ -26,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${shareTechMono.variable} ${jost.variable} antialiased bg-vault-navy text-vault-paper overflow-x-hidden`}
+        className={`${spaceGrotesk.variable} ${dmSans.variable} ${spaceMono.variable} antialiased bg-bg-primary text-text-primary overflow-x-hidden font-body`}
       >
         <script
           dangerouslySetInnerHTML={{

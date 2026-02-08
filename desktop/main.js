@@ -1,5 +1,6 @@
 // desktop/main.js
 // This is the main Electron process - it controls the app window and system integration
+console.log('[Main] main.js execution started...');
 
 const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, nativeImage, dialog, protocol, net } = require('electron');
 const { autoUpdater } = require('electron-updater');
@@ -23,7 +24,13 @@ const { Anthropic } = require('@anthropic-ai/sdk');
 const envPath = app.isPackaged
     ? path.join(process.resourcesPath, '.env')
     : path.join(__dirname, '.env');
-require('dotenv').config({ path: envPath });
+const dotenvResult = require('dotenv').config({ path: envPath });
+if (dotenvResult.error) {
+    console.error('[Main] Error loading .env:', dotenvResult.error);
+} else {
+    console.log('[Main] .env loaded successfully from:', envPath);
+}
+
 
 // Initialize settings storage
 const store = new Store({
@@ -53,7 +60,8 @@ let tray = null;
 const fs = require('fs');
 
 // Simple file logger
-function log(message) {
+function logger(message) {
+    console.log(message); // Log to terminal
     try {
         const userDataPath = app.getPath('userData');
         if (!fs.existsSync(userDataPath)) {
@@ -62,7 +70,7 @@ function log(message) {
         const logPath = path.join(userDataPath, 'neato.log');
         fs.appendFileSync(logPath, `${new Date().toISOString()} - ${message}\n`);
     } catch (e) {
-        console.log(message);
+        // Silently fail if file logging fails
     }
 }
 
@@ -74,7 +82,7 @@ const autoLauncher = new AutoLaunch({
 
 // Create the main application window
 function createWindow() {
-    log('Creating window...');
+    logger('Creating window...');
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
@@ -96,13 +104,15 @@ function createWindow() {
     // For development: load from Next.js dev server
     // For production: load from built files
     if (process.env.NODE_ENV === 'development') {
-        log('Loading dev server');
+        logger('Loading dev server');
         mainWindow.loadURL('http://localhost:3000');
         mainWindow.webContents.openDevTools();
     } else {
-        // Load the live production web app
-        log('Loading production URL');
-        mainWindow.loadURL('https://neato-voice.netlify.app');
+        // Load the live production web app for main window (Stable Auth & Routing)
+        // User requested Login Page to be the entry point
+        logger('Loading production Login Page (DEV OVERRIDE -> localhost)');
+        // mainWindow.loadURL('https://neato-voice.netlify.app/login');
+        mainWindow.loadURL('http://localhost:3000/login');
     }
 
     // Minimize to tray instead of closing
@@ -119,7 +129,7 @@ function createWindow() {
 }
 
 function createOverlayWindow() {
-    log('Creating overlay window...');
+    logger('Creating overlay window...');
     const { screen } = require('electron');
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize; // Use workAreaSize to avoid taskbar
@@ -152,15 +162,16 @@ function createOverlayWindow() {
         overlayWindow.loadURL('http://localhost:3000/overlay');
     } else {
         // Load via app:// protocol
-        log(`Loading Overlay via app://`);
-        overlayWindow.loadURL('app://neato-voice/overlay/index.html')
-            .then(() => log('[Overlay] Loaded successfully'))
-            .catch(e => log(`[Overlay] Failed to load: ${e}`));
+        logger(`Loading Overlay via app:// (DEV OVERRIDE -> localhost)`);
+        // overlayWindow.loadURL('app://neato-voice/overlay.html')
+        overlayWindow.loadURL('http://localhost:3000/overlay')
+            .then(() => logger('[Overlay] Loaded successfully'))
+            .catch(e => logger(`[Overlay] Failed to load: ${e}`));
     }
 
     // Ensure it's ready
     overlayWindow.once('ready-to-show', () => {
-        log('[Overlay] Ready to show');
+        logger('[Overlay] Ready to show');
     });
 
     overlayWindow.hide();
@@ -180,9 +191,9 @@ function createTray() {
 
     // Log version at startup
     const packageJson = require('./package.json');
-    log(`========================================`);
-    log(`Neato Voice Desktop v${packageJson.version}`);
-    log(`========================================`);
+    logger(`========================================`);
+    logger(`Neato Voice Desktop v${packageJson.version}`);
+    logger(`========================================`);
 
     tray = new Tray(trayIcon.resize({ width: 16, height: 16 }));
     tray.setToolTip('Neato Voice - Click to open');
@@ -259,7 +270,7 @@ function registerHotkeys() {
 
     try {
         const registered = globalShortcut.register(hotkey, () => {
-            log('Hotkey pressed!');
+            logger('Hotkey pressed!');
 
             // Check Limit
             let stats = store.get('stats');
@@ -298,38 +309,38 @@ function registerHotkeys() {
         });
 
         if (!registered) {
-            log(`Failed to register hotkey: ${hotkey}`);
+            logger(`Failed to register hotkey: ${hotkey}`);
         } else {
-            log(`Hotkey registered: ${hotkey}`);
+            logger(`Hotkey registered: ${hotkey}`);
         }
     } catch (e) {
-        log(`Exception registering hotkey: ${e}`);
+        logger(`Exception registering hotkey: ${e}`);
     }
 }
 
 // Setup Updater
 function setupAutoUpdater() {
-    log('[Updater] Initializing...');
+    logger('[Updater] Initializing...');
 
     autoUpdater.logger = {
-        info(msg) { log(`[Updater] ${msg}`); },
-        warn(msg) { log(`[Updater Warn] ${msg}`); },
-        error(msg) { log(`[Updater Error] ${msg}`); }
+        info(msg) { logger(`[Updater] ${msg}`); },
+        warn(msg) { logger(`[Updater Warn] ${msg}`); },
+        error(msg) { logger(`[Updater Error] ${msg}`); }
     };
 
     // Trigger check
     try {
         autoUpdater.checkForUpdatesAndNotify();
     } catch (e) {
-        log(`[Updater] Error checking: ${e}`);
+        logger(`[Updater] Error checking: ${e}`);
     }
 
     autoUpdater.on('update-available', () => {
-        log('[Updater] Update available.');
+        logger('[Updater] Update available.');
     });
 
     autoUpdater.on('update-downloaded', () => {
-        log('[Updater] Update downloaded.');
+        logger('[Updater] Update downloaded.');
         dialog.showMessageBox({
             type: 'info',
             title: 'Update Ready',
@@ -361,23 +372,97 @@ if (!gotTheLock) {
         protocol.handle('app', async (req) => {
             try {
                 const { pathname } = new URL(req.url);
-                log(`[Protocol] Request: ${req.url} -> pathname: ${pathname}`);
+                logger(`[Protocol] Request: ${req.url} -> pathname: ${pathname}`);
 
                 // Strip leading slash
                 const resolvedPath = pathname.replace(/^\//, '');
-
                 let targetPath = path.join(__dirname, 'web-build', resolvedPath);
 
-                // If it's likely a directory (no extension), look for index.html
-                if (!path.extname(targetPath)) {
-                    targetPath = path.join(targetPath, 'index.html');
+                // --- ADVANCED ROUTE RESOLUTION ---
+
+                // 1. Handle Next.js RSC/Data requests
+                if (resolvedPath.includes('__next')) {
+                    const fileName = path.basename(resolvedPath);
+                    const dirName = path.dirname(resolvedPath);
+
+                    // 1a. Try exact location (e.g. signup/file.txt)
+                    const exactPath = path.join(__dirname, 'web-build', dirName, fileName);
+
+                    // 1b. Try root location (e.g. file.txt)
+                    const rootPath = path.join(__dirname, 'web-build', fileName);
+
+                    if (fs.existsSync(exactPath)) {
+                        targetPath = exactPath;
+                        logger(`[Protocol] Found (exact): ${targetPath}`);
+                    } else if (fs.existsSync(rootPath)) {
+                        targetPath = rootPath;
+                        logger(`[Protocol] Found (root fallback): ${targetPath}`);
+                    } else {
+                        // 1c. RECURSIVE SEARCH FALLBACK
+                        // Next.js static exports put files in unpredictable nested folders.
+                        // We will search the entire web-build directory for a file with this name.
+                        try {
+                            const findFile = (dir, name) => {
+                                const files = fs.readdirSync(dir);
+                                for (const file of files) {
+                                    const fullPath = path.join(dir, file);
+                                    let stat;
+                                    try {
+                                        stat = fs.statSync(fullPath);
+                                    } catch (e) { continue; }
+
+                                    if (stat.isDirectory()) {
+                                        // Specific Fix: Next.js sometimes creates directories named exactly as the requested file
+                                        // e.g. "__next.!KGF1dGgp.signup.txt" is actually a directory containing "__PAGE__.txt"
+                                        if (file === name) {
+                                            // Check if it's a directory masquerading as the file (RSC payload)
+                                            // The actual content is often in __PAGE__.txt inside it
+                                            const pagePath = path.join(fullPath, '__PAGE__.txt');
+                                            const indexPath = path.join(fullPath, 'index.txt');
+
+                                            if (fs.existsSync(pagePath)) return pagePath;
+                                            if (fs.existsSync(indexPath)) return indexPath;
+
+                                            // If regular recursive search, continue down
+                                            const found = findFile(fullPath, name);
+                                            if (found) return found;
+                                        } else {
+                                            // Normal directory recursion
+                                            const found = findFile(fullPath, name);
+                                            if (found) return found;
+                                        }
+                                    } else if (file === name) {
+                                        return fullPath;
+                                    }
+                                }
+                                return null;
+                            };
+
+                            const foundPath = findFile(path.join(__dirname, 'web-build'), fileName);
+                            if (foundPath) {
+                                targetPath = foundPath;
+                                logger(`[Protocol] Found (recursive search): ${targetPath}`);
+                            }
+                        } catch (err) {
+                            logger(`[Protocol] Search error: ${err}`);
+                        }
+                    }
                 }
 
-                log(`[Protocol] Resolved to: ${targetPath}`);
+                // 2. Handle Extensionless Routes (e.g., /login -> /login.html)
+                if (!path.extname(targetPath)) {
+                    if (fs.existsSync(targetPath + '.html')) {
+                        targetPath += '.html';
+                    } else if (fs.existsSync(path.join(targetPath, 'index.html'))) {
+                        targetPath = path.join(targetPath, 'index.html');
+                    }
+                }
+
+                logger(`[Protocol] Final Resolved Path: ${targetPath}`);
 
                 // Check if file exists
                 if (!fs.existsSync(targetPath)) {
-                    log(`[Protocol] File not found: ${targetPath}`);
+                    logger(`[Protocol] File not found: ${targetPath}`);
                     // Return 404 response
                     return new Response('Not Found', {
                         status: 404,
@@ -387,11 +472,11 @@ if (!gotTheLock) {
 
                 // Use net.fetch to serve the file
                 const fileUrl = require('url').pathToFileURL(targetPath).toString();
-                log(`[Protocol] Serving: ${fileUrl}`);
+                logger(`[Protocol] Serving: ${fileUrl}`);
                 return net.fetch(fileUrl);
 
             } catch (error) {
-                log(`[Protocol] Error: ${error.message}`);
+                logger(`[Protocol] Error: ${error.message}`);
                 return new Response(`Error: ${error.message}`, {
                     status: 500,
                     headers: { 'content-type': 'text/plain' }
@@ -399,7 +484,7 @@ if (!gotTheLock) {
             }
         });
 
-        log('App Ready');
+        logger('App Ready');
         createWindow();
         createOverlayWindow();
         createTray();
@@ -626,17 +711,18 @@ ipcMain.handle('get-deepgram-key', () => {
     // For Desktop, we trust the user.
     const key = process.env.DEEPGRAM_API_KEY || process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
     if (!key) {
-        log('[Deepgram] Error: No DEEPGRAM_API_KEY found in env');
+        logger('[Deepgram] Error: No DEEPGRAM_API_KEY found in env');
         return null;
     }
     return key;
 });
 
 // Handle AI Refinement
+logger('[Main] Registering refine-text IPC handler...');
 ipcMain.handle('refine-text', async (event, text, options = {}) => {
     try {
-        log(`[Refinement] Request received (length: ${text.length} chars)`);
-        // log(`[Refinement] Options: ${JSON.stringify(options)}`); // Debug log
+        logger(`[Refinement] Request received (length: ${text.length} chars)`);
+        // logger(`[Refinement] Options: ${JSON.stringify(options)}`); // Debug log
 
         // Check for translation - Fallback to global store setting if not passed
         let translation = options.translation;
@@ -651,16 +737,17 @@ ipcMain.handle('refine-text', async (event, text, options = {}) => {
         const isTranslation = translation.enabled === true && !!translation.targetLanguage;
 
         if (isTranslation) {
-            log(`[Refinement] Mode: TRANSLATION to ${translation.targetLanguage}`);
+            logger(`[Refinement] Mode: TRANSLATION to ${translation.targetLanguage}`);
         } else {
-            log(`[Refinement] Mode: STANDARD DICTATION`);
+            logger(`[Refinement] Mode: STANDARD DICTATION`);
         }
 
         const apiKey = process.env.ANTHROPIC_API_KEY;
         if (!apiKey) {
-            log('[Refinement] Error: No ANTHROPIC_API_KEY found');
+            logger('[Refinement] Error: No ANTHROPIC_API_KEY found in process.env');
             throw new Error('Anthropic API key not configured');
         }
+        logger(`[Refinement] API Key found (starts with: ${apiKey.substring(0, 7)}...)`);
 
         const anthropic = new Anthropic({ apiKey });
 
@@ -713,7 +800,7 @@ Input: "${text}"
 Output:`;
 
         if (isTranslation) {
-            log(`[Refinement] Translating to ${translation.targetLanguage}`);
+            logger(`[Refinement] Translating to ${translation.targetLanguage}`);
             systemPrompt = `Translate the following transcribed text to ${translation.targetLanguage}.
 Rules:
 1. Preserve the original meaning and tone.
@@ -722,9 +809,9 @@ Rules:
             userPrompt = `Translate this: "${text}"`;
         }
 
-        log('[Refinement] Calling Claude API...');
+        logger('[Refinement] Calling Claude API...');
         const response = await anthropic.messages.create({
-            model: "claude-3-5-sonnet-20241022",
+            model: "claude-3-haiku-20240307",
             max_tokens: 2048,
             system: systemPrompt,
             messages: [{
@@ -734,14 +821,14 @@ Rules:
         });
 
         const refinedText = response.content[0].text.trim();
-        log(`[Refinement] Success. Result length: ${refinedText.length}`);
-        log(`[Refinement] AI Output (first 200 chars): ${refinedText.substring(0, 200)}`);
+        logger(`[Refinement] Success. Result length: ${refinedText.length}`);
+        logger(`[Refinement] AI Output (first 200 chars): ${refinedText.substring(0, 200)}`);
 
         // Log full output for debugging (can be disabled later)
-        console.log('[Refinement] FULL AI OUTPUT:');
-        console.log('---START---');
-        console.log(refinedText);
-        console.log('---END---');
+        logger('[Refinement] FULL AI OUTPUT:');
+        logger('---START---');
+        logger(refinedText);
+        logger('---END---');
 
         // Update Correction Stats
         try {
@@ -749,13 +836,14 @@ Rules:
             currentStats.correctionsCount = (currentStats.correctionsCount || 0) + 1;
             store.set('stats', currentStats);
         } catch (e) {
-            log(`[Stats] Error updating corrections: ${e}`);
+            logger(`[Stats] Error updating corrections: ${e}`);
         }
 
         return refinedText;
 
     } catch (error) {
-        log(`[Refinement] Error: ${error.message}`);
+        logger(`[Refinement] Error: ${error.message}`);
+        logger(`[Refinement] Stack: ${error.stack}`);
         // If refinement fails, return original text so the user's workflow isn't blocked
         return text;
     }

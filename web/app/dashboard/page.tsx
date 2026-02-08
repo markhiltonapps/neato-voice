@@ -57,85 +57,94 @@ export default function AppDashboard() {
         const api = getElectronAPI();
         if (api) {
             api.getStats().then(setStats);
-
-            // Set interval to refresh stats occasionally
             const interval = setInterval(() => {
-                api.getStats().then((newStats) => {
-                    setStats(newStats);
-                });
+                api.getStats().then(setStats);
             }, 5000);
-
             return () => clearInterval(interval);
         }
     }, []);
 
-    // We don't need to manually start recording here as it's triggered by Global Hotkey in Electron
-    // But we should initialize the hook
     useVoiceRecording();
 
     return (
-        <div className="flex h-screen w-screen overflow-hidden bg-vault-navy text-vault-paper font-sans">
+        <div className="flex h-screen w-screen overflow-hidden bg-bg-primary text-text-primary font-body">
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-            <main className="flex-1 h-full overflow-hidden relative flex flex-col">
+            <main className="flex-1 h-full overflow-hidden relative flex flex-col bg-bg-primary">
 
-                {/* Top Bar for Credits */}
-                <div className="h-10 bg-vault-charcoal border-b border-vault-olive flex items-center justify-between px-4 text-xs font-mono">
+                {/* Top Bar */}
+                <div className="h-16 border-b border-surface-2 flex items-center justify-between px-6 bg-surface-1/50 backdrop-blur-sm z-20">
                     <div className="flex items-center gap-4">
-                        <div>OPERATOR: <span className="text-atom-amber">{userEmail}</span></div>
-                        <a href="/download" target="_blank" className="text-vault-dust hover:text-atom-green hover:underline">
-                            ⇩ DOWNLOAD_APP
-                        </a>
+                        <div className="text-sm font-medium text-text-secondary">
+                            Welcome, <span className="text-text-primary font-bold">{userEmail}</span>
+                        </div>
                     </div>
                     <div className="flex items-center gap-4">
                         {isAdmin && (
-                            <button onClick={() => router.push('/admin')} className="text-vault-rust hover:text-atom-amber hover:underline transition-colors mr-4">[ADMIN PANEL]</button>
+                            <button onClick={() => router.push('/admin')} className="text-xs font-bold text-accent-red hover:text-white uppercase tracking-wider px-3 py-1 bg-accent-red/10 rounded-full hover:bg-accent-red transition-all">
+                                Admin Access
+                            </button>
                         )}
-                        <div>CREDITS: <span className={credits < 2 ? 'text-vault-rust animate-pulse' : 'text-atom-green'}>${credits.toFixed(2)}</span></div>
-                        <button onClick={() => router.push('/pricing')} className="border border-atom-teal text-atom-teal px-2 hover:bg-atom-teal hover:text-vault-navy transition-colors">ADD FUNDS</button>
+                        <div className="flex items-center gap-2 bg-surface-2 rounded-full px-4 py-1.5 border border-surface-3">
+                            <span className="text-xs text-text-secondary uppercase tracking-wider font-bold">Balance</span>
+                            <span className={`text-sm font-mono font-bold ${credits < 2 ? 'text-state-warning' : 'text-accent-green'}`}>
+                                ${credits.toFixed(2)}
+                            </span>
+                        </div>
+                        <button onClick={() => router.push('/pricing')} className="text-xs font-bold text-white bg-accent-blue hover:bg-accent-blue/90 px-4 py-2 rounded-lg transition-all shadow-lg shadow-accent-blue/20">
+                            Add Funds
+                        </button>
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-hidden relative">
+                <div className="flex-1 overflow-hidden relative p-6">
                     {activeTab === 'home' && (
-                        <Dashboard
-                            stats={stats}
-                            lastTranscript={rawTranscript}
-                            refinedTranscript={refinedText}
-                            isRefining={recordingState === 'processing'}
-                            refinementError={null} // We need to expose error state from store
-                        />
+                        <div className="h-full overflow-y-auto pr-2 pb-20">
+                            <Dashboard
+                                stats={stats}
+                                lastTranscript={rawTranscript}
+                                refinedTranscript={refinedText}
+                                isRefining={recordingState === 'processing'}
+                                refinementError={null}
+                            />
+                        </div>
                     )}
-                    {activeTab === 'dictionary' && (
-                        <DictionarySettings />
-                    )}
-                    {activeTab === 'history' && (
-                        <HistoryView />
-                    )}
-                    {activeTab === 'settings' && (
-                        <SettingsView />
-                    )}
-                    {activeTab === 'help' && (
-                        <HelpView />
-                    )}
+                    {activeTab === 'dictionary' && <DictionarySettings />}
+                    {activeTab === 'history' && <HistoryView />}
+                    {activeTab === 'settings' && <SettingsView />}
+                    {activeTab === 'help' && <HelpView />}
                 </div>
 
-                {/* Recording Overlay */}
+                {/* Recording Overlay - Modern */}
                 {recordingState !== 'idle' && (
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center crt-overlay">
-                        <div className="bg-vault-charcoal border-2 border-atom-green p-8 rounded-lg shadow-[0_0_50px_rgba(57,255,20,0.2)] flex flex-col items-center animate-in fade-in zoom-in duration-200 min-w-[300px]">
-                            <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 border-4 ${recordingState === 'recording' ? 'border-vault-rust bg-vault-rust/20 text-vault-rust' : 'border-atom-teal bg-atom-teal/20 text-atom-teal'
+                    <div className="absolute inset-0 bg-bg-primary/90 backdrop-blur-md z-50 flex items-center justify-center animate-in fade-in duration-200">
+                        <div className="flex flex-col items-center max-w-lg w-full">
+                            <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-8 relative ${recordingState === 'recording' ? 'bg-accent-red/20' : 'bg-accent-blue/20'
                                 }`}>
-                                {recordingState === 'recording' ? (
-                                    <div className="w-10 h-10 bg-vault-rust rounded-sm animate-pulse shadow-[0_0_20px_rgba(196,90,44,0.8)]" />
-                                ) : (
-                                    <div className="w-10 h-10 border-4 border-atom-teal border-t-transparent rounded-full animate-spin" />
+                                {recordingState === 'recording' && (
+                                    <div className="absolute inset-0 rounded-full border-4 border-accent-red/30 animate-ping" />
                                 )}
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-2xl ${recordingState === 'recording' ? 'bg-accent-red shadow-accent-red/40' : 'bg-accent-blue shadow-accent-blue/40'
+                                    }`}>
+                                    {recordingState === 'recording' ? (
+                                        <div className="w-6 h-6 bg-white rounded-sm animate-pulse" />
+                                    ) : (
+                                        <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                                    )}
+                                </div>
                             </div>
-                            <h2 className="text-2xl font-mono text-atom-green text-glow mb-2">
-                                {recordingState === 'recording' ? 'RECORDING IN PROGRESS' : 'PROCESSING DATA...'}
+
+                            <h2 className="text-3xl font-bold font-display text-white mb-4 tracking-tight">
+                                {recordingState === 'recording' ? 'Listening...' : 'Refining Text...'}
                             </h2>
-                            <p className="text-vault-dust font-mono text-center max-w-md animate-pulse">
-                                {rawTranscript || 'AWAITING AUDIO INPUT...'}
+
+                            <div className="w-full bg-surface-2 rounded-xl p-6 border border-surface-3 min-h-[120px] flex items-center justify-center text-center">
+                                <p className="text-xl text-text-primary font-medium leading-relaxed animate-pulse">
+                                    "{rawTranscript || 'Speak now...'}"
+                                </p>
+                            </div>
+
+                            <p className="mt-6 text-sm text-text-muted font-mono uppercase tracking-widest">
+                                {recordingState === 'recording' ? 'Release keys to finish' : 'Applying AI magic'}
                             </p>
                         </div>
                     </div>
