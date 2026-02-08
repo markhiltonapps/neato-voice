@@ -2,15 +2,27 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from 'next/link';
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+
+    // Load saved credentials on mount
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('neato-voice-email');
+        const savedPassword = localStorage.getItem('neato-voice-password');
+        if (savedEmail && savedPassword) {
+            setEmail(savedEmail);
+            setPassword(savedPassword);
+            setRememberMe(true);
+        }
+    }, []);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,6 +39,15 @@ export default function LoginPage() {
             setError(error.message);
             setLoading(false);
         } else {
+            // Save credentials if Remember Me is checked
+            if (rememberMe) {
+                localStorage.setItem('neato-voice-email', email);
+                localStorage.setItem('neato-voice-password', password);
+            } else {
+                localStorage.removeItem('neato-voice-email');
+                localStorage.removeItem('neato-voice-password');
+            }
+
             router.push("/dashboard"); // Redirect to dashboard after login
             router.refresh();
         }
@@ -88,6 +109,21 @@ export default function LoginPage() {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
+                    </div>
+
+                    {/* Remember Me Checkbox */}
+                    <div className="flex items-center">
+                        <input
+                            id="remember-me"
+                            name="remember-me"
+                            type="checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className="h-4 w-4 rounded border-surface-2 bg-surface-2/50 text-accent-blue focus:ring-2 focus:ring-accent-blue focus:ring-offset-0 cursor-pointer transition-all"
+                        />
+                        <label htmlFor="remember-me" className="ml-2 block text-sm text-text-secondary cursor-pointer hover:text-text-primary transition-colors">
+                            Remember my credentials
+                        </label>
                     </div>
 
                     {error && (
