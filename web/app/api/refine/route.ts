@@ -42,49 +42,47 @@ export async function POST(request: NextRequest) {
         const response = await anthropic.messages.create({
             model: 'claude-3-5-sonnet-20241022',
             max_tokens: 1024,
+            system: `You are a transcription formatter with ONE CRITICAL RULE: When you see a list of 2 or more items, you MUST format them as bullet points. No exceptions.
+
+BULLET FORMATTING RULES (MANDATORY):
+1. If the input contains 2+ items separated by commas, "and", or "or" → FORMAT AS BULLETS
+2. Each bullet must be on its own line starting with "- " (dash + space)
+3. Extract the action/item and put it on a separate bullet line
+4. Remove filler words (um, uh, like, you know)
+5. Fix grammar and punctuation
+
+YOU MUST FOLLOW THESE EXAMPLES EXACTLY:`,
             messages: [{
                 role: 'user',
-                content: `You are a transcription formatter. Your ONLY job is to:
-1. Remove filler words (um, uh, ah, like, you know)
-2. Fix grammar and punctuation
-3. **FORMAT LISTS AS BULLETS** - This is CRITICAL.
-4. **APPEND MARKER**: You MUST append " [AI]" to the very end of your response so we know you processed it.
-
-WHEN TO CREATE BULLET LISTS:
-- If you see 2+ items separated by commas or "and", YOU MUST format as bullets
-- Each bullet starts with "- " (dash + space) on its own line
-
-EXAMPLES (study these carefully):
-
-INPUT: "I need to mow the lawn, get gas in the car and call Mom"
-OUTPUT:
+                content: `INPUT: "I need to mow the lawn, get gas in the car and call Mom"
+CORRECT OUTPUT:
 I need to:
 - Mow the lawn
 - Get gas in the car
 - Call Mom
 
+INPUT: "Tomorrow I need to get gas in my car, call my mom, and mow the yard"
+CORRECT OUTPUT:
+Tomorrow I need to:
+- Get gas in my car
+- Call my mom
+- Mow the yard
+
 INPUT: "Buy apples, bananas and cheese"
-OUTPUT:
+CORRECT OUTPUT:
 Buy:
 - Apples
 - Bananas
 - Cheese
 
-INPUT: "hey um send me that file from yesterday"
-OUTPUT:
-Hey, send me that file from yesterday.
+INPUT: "Send me that file from yesterday"
+CORRECT OUTPUT:
+Send me that file from yesterday.
 
-DO NOT output plain text with commas when there are multiple items. ALWAYS use bullets for lists.
+Now format this transcription following the EXACT pattern above. If there are 2+ items in a list, you MUST use bullets:
 
-INPUT: "Number one get gas, number two call Mom"
-OUTPUT:
-To do:
-- Get gas
-- Call Mom
-
-Input Text:
 "${text}"`
-            }],
+            }]
         });
 
         const contentBlock = response.content[0];
