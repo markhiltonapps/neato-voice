@@ -75,6 +75,12 @@ Hey, send me that file from yesterday.
 
 DO NOT output plain text with commas when there are multiple items. ALWAYS use bullets for lists.
 
+INPUT: "Number one get gas, number two call Mom"
+OUTPUT:
+To do:
+- Get gas
+- Call Mom
+
 Input Text:
 "${text}"`
             }],
