@@ -85,8 +85,17 @@ Now format this transcription following the EXACT pattern above. If there are 2+
             }]
         });
 
+
         const contentBlock = response.content[0];
         const refinedText = contentBlock.type === 'text' ? contentBlock.text : '';
+
+        // DEBUG: Log what Claude actually returned
+        console.log('=== REFINEMENT DEBUG ===');
+        console.log('Input:', text);
+        console.log('Output:', refinedText);
+        console.log('Has bullets:', refinedText.includes('-'));
+        console.log('========================');
+
 
         // 4. Calculate Usage
         const inputTokens = response.usage.input_tokens;
