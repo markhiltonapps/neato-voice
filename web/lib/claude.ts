@@ -9,7 +9,8 @@ export async function refineTranscription(rawText: string): Promise<string> {
         });
 
         if (!response.ok) {
-            throw new Error('Refinement failed');
+            const errorData = await response.json().catch(() => ({ error: response.statusText }));
+            throw new Error(`Server Error (${response.status}): ${errorData.error || 'Unknown Error'}`);
         }
 
         const data = await response.json();
