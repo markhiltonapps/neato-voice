@@ -73,15 +73,23 @@ export default async function AdminDashboard() {
             <div className="max-w-7xl mx-auto space-y-8">
 
                 {/* Header */}
-                <header className="flex justify-between items-end border-b-2 border-atom-green pb-6">
-                    <div>
-                        <h1 className="text-4xl font-bold text-atom-green text-glow mb-2">OVERSEER TERMINAL</h1>
-                        <p className="text-sm text-vault-dust tracking-widest uppercase">
-                            Administrator Level 5 • Access Granted
-                        </p>
+                <header className="border-b-2 border-atom-green pb-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <div>
+                            <h1 className="text-4xl font-bold text-atom-green text-glow mb-2">OVERSEER TERMINAL</h1>
+                            <p className="text-sm text-vault-dust tracking-widest uppercase">
+                                Administrator Level 5 • Access Granted
+                            </p>
+                        </div>
+                        <a
+                            href="/dashboard"
+                            className="px-4 py-2 border border-atom-green text-atom-green hover:bg-atom-green hover:text-vault-navy transition-all duration-200 text-sm font-bold tracking-wider uppercase flex items-center gap-2"
+                        >
+                            <span>←</span> Back to Dashboard
+                        </a>
                     </div>
-                    <div className="text-right">
-                        <div className="flex items-center justify-end gap-2 text-vault-rust mb-1 animate-pulse">
+                    <div className="flex justify-end items-center gap-6">
+                        <div className="flex items-center gap-2 text-vault-rust animate-pulse">
                             <span className="w-2 h-2 bg-vault-rust rounded-full"></span>
                             SECURE CONNECTION LIVE
                         </div>
