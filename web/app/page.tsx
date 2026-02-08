@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import {
   ArrowRight, Play, Mic, Wand2, Laptop, Shield, Zap,
   CheckCircle2, Star, Download, ChevronDown, Menu, X
@@ -13,6 +14,21 @@ import {
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Simulate/Trigger download
+    const link = document.createElement('a');
+    link.href = '/neato-logo.svg'; // Placeholder for actual installer
+    link.download = 'NeatoVoiceInstaller.exe';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Redirect to onboarding
+    router.push('/signup');
+  };
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -46,9 +62,12 @@ const Navbar = () => {
           <Link href="/login" className="text-sm font-bold text-text-primary hover:text-accent-blue transition-colors">
             Sign In
           </Link>
-          <Link href="/download" className="bg-accent-blue hover:bg-blue-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-accent-blue/20 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+          <button
+            onClick={handleDownload}
+            className="bg-accent-blue hover:bg-blue-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-accent-blue/20 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          >
             <Download className="w-4 h-4" /> Download
-          </Link>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -83,8 +102,20 @@ const Navbar = () => {
 
 const Hero = () => {
   const { scrollY } = useScroll();
+  const router = useRouter();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const link = document.createElement('a');
+    link.href = '/neato-logo.svg';
+    link.download = 'NeatoVoiceInstaller.exe';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    router.push('/signup');
+  };
 
   return (
     <section className="relative min-h-[100vh] flex flex-col justify-center items-center pb-20 pt-[clamp(140px,20vh,240px)] overflow-hidden">
@@ -145,11 +176,14 @@ const Hero = () => {
           transition={{ delay: 0.6 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
         >
-          <Link href="/download" className="group h-12 px-8 rounded-lg bg-accent-blue text-white font-bold flex items-center gap-2 hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent-blue/25 transition-all">
+          <button
+            onClick={handleDownload}
+            className="group h-12 px-8 rounded-lg bg-accent-blue text-white font-bold flex items-center gap-2 hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent-blue/25 transition-all"
+          >
             <Download className="w-4 h-4" /> Download for Windows
-          </Link>
-          <Link href="/login" className="h-12 px-8 rounded-lg bg-surface-1/50 border border-white/10 text-text-primary font-bold flex items-center gap-2 hover:bg-surface-2 hover:border-white/20 transition-all">
-            My Dashboard
+          </button>
+          <Link href="/signup" className="h-12 px-8 rounded-lg bg-surface-1/50 border border-white/10 text-text-primary font-bold flex items-center gap-2 hover:bg-surface-2 hover:border-white/20 transition-all">
+            Start Free Trial
           </Link>
         </motion.div>
 
@@ -340,40 +374,57 @@ const Testimonials = () => (
   </section>
 );
 
-const CTA = () => (
-  <section className="py-32 relative overflow-hidden">
-    <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-surface-1/50 to-bg-primary" />
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-accent-blue/10 blur-[100px] rounded-full pointer-events-none" />
+const CTA = () => {
+  const router = useRouter();
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const link = document.createElement('a');
+    link.href = '/neato-logo.svg';
+    link.download = 'NeatoVoiceInstaller.exe';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    router.push('/signup');
+  };
 
-    <div className="container max-w-4xl mx-auto px-6 relative z-10 text-center">
-      <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="w-20 h-20 rounded-full border-2 border-white/20 mx-auto mb-8 overflow-hidden shadow-[0_0_30px_rgba(240,180,41,0.2)]"
-      >
-        <img src="/neato-logo.svg" alt="Mascot" className="w-full h-full object-cover" />
-      </motion.div>
+  return (
+    <section className="py-32 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-surface-1/50 to-bg-primary" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-accent-blue/10 blur-[100px] rounded-full pointer-events-none" />
 
-      <h2 className="font-display font-bold text-4xl sm:text-5xl mb-6">
-        Stop Typing. <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-red to-accent-blue">Start Speaking.</span>
-      </h2>
-      <p className="text-xl text-text-secondary mb-10 max-w-xl mx-auto">
-        Download Neato Voice today and experience the future of dictation.
-      </p>
+      <div className="container max-w-4xl mx-auto px-6 relative z-10 text-center">
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="w-20 h-20 rounded-full border-2 border-white/20 mx-auto mb-8 overflow-hidden shadow-[0_0_30px_rgba(240,180,41,0.2)]"
+        >
+          <img src="/neato-logo.svg" alt="Mascot" className="w-full h-full object-cover" />
+        </motion.div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <Link href="/download" className="h-14 px-8 rounded-full bg-accent-blue text-white font-bold text-lg flex items-center gap-2 hover:bg-blue-600 hover:scale-105 transition-all shadow-xl shadow-accent-blue/20">
-          <Download className="w-5 h-5" /> Download for Windows
-        </Link>
+        <h2 className="font-display font-bold text-4xl sm:text-5xl mb-6">
+          Stop Typing. <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-red to-accent-blue">Start Speaking.</span>
+        </h2>
+        <p className="text-xl text-text-secondary mb-10 max-w-xl mx-auto">
+          Download Neato Voice today and experience the future of dictation.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <button
+            onClick={handleDownload}
+            className="h-14 px-8 rounded-full bg-accent-blue text-white font-bold text-lg flex items-center gap-2 hover:bg-blue-600 hover:scale-105 transition-all shadow-xl shadow-accent-blue/20"
+          >
+            <Download className="w-5 h-5" /> Download for Windows
+          </button>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-6 text-xs font-mono text-text-muted">
+          <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> Windows 10/11</span>
+          <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> Free Trial Available</span>
+        </div>
       </div>
-
-      <div className="mt-8 flex items-center justify-center gap-6 text-xs font-mono text-text-muted">
-        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> Windows 10/11</span>
-        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> Free Trial Available</span>
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const Footer = () => (
   <footer className="border-t border-surface-2 bg-bg-primary pt-20 pb-10">
