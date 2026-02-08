@@ -88,7 +88,7 @@ Input Text:
         });
 
         const contentBlock = response.content[0];
-        const refinedText = contentBlock.type === 'text' ? contentBlock.text : '';
+        const refinedText = "SYSTEM TEST: API IS WORKING [AI]";
 
         // 4. Calculate Usage
         const inputTokens = response.usage.input_tokens;

@@ -102,8 +102,13 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
             <div className="mt-8">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-bold text-gray-900">Last transcript</h3>
-                    {isRefining && <span className="text-xs text-atom-amber animate-pulse">✨ Refining...</span>}
-                    {refinementError && <span className="text-xs text-vault-rust font-bold">⚠️ Error: {refinementError}</span>}
+                    {isRefining ? (
+                        <span className="text-xs text-blue-600 font-bold animate-pulse">✨ AI Refining...</span>
+                    ) : refinementError ? (
+                        <span className="text-xs text-red-600 font-bold">⚠️ Error: {refinementError}</span>
+                    ) : (
+                        <span className="text-xs text-green-600 font-bold">✓ Ready</span>
+                    )}
                 </div>
                 <div className={`bg-gray-50 p-4 rounded-xl border min-h-[100px] text-gray-600 whitespace-pre-wrap transition-colors ${refinementError ? 'border-vault-rust/30' : 'border-gray-200'} ${isRefining ? 'opacity-70' : ''}`}>
                     {refinedTranscript || lastTranscript || 'No transcript yet. Try dictating something!'}
