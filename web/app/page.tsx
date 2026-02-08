@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import {
-  ArrowRight, Play, Phone, Code2, Mic, Target, Handshake, ImagePlus,
-  UserPlus, Settings2, Rocket, Zap, Shield, Globe, Puzzle, BarChart3,
-  HeartHandshake, ChevronDown, CheckCircle2, Star
+  ArrowRight, Play, Mic, Wand2, Laptop, Shield, Zap,
+  CheckCircle2, Star, Download, ChevronDown, Menu, X
 } from 'lucide-react';
 
 // --- Components ---
@@ -33,36 +31,29 @@ const Navbar = () => {
       <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-9 h-9 overflow-hidden rounded-full border border-white/10 shadow-lg group-hover:scale-105 transition-transform">
-            {/* Mascot Logo - Using Image with fallback or placeholder if file missing */}
-            <img src="/neato-logo.svg" alt="Neato" className="object-cover w-full h-full" />
+            <img src="/neato-logo.svg" alt="Neato Voice" className="object-cover w-full h-full" />
           </div>
-          <span className="font-display font-bold text-lg text-text-primary tracking-tight">Neato Ventures</span>
+          <span className="font-display font-bold text-lg text-text-primary tracking-tight">Neato Voice</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-text-secondary">
-          <button className="hover:text-text-primary transition-colors flex items-center gap-1 group">
-            Products <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
-          </button>
-          <Link href="#solutions" className="hover:text-text-primary transition-colors">Solutions</Link>
-          <Link href="#testimonials" className="hover:text-text-primary transition-colors">Testimonials</Link>
+          <Link href="#features" className="hover:text-text-primary transition-colors">Features</Link>
+          <Link href="#how-it-works" className="hover:text-text-primary transition-colors">How it Works</Link>
+          <Link href="#pricing" className="hover:text-text-primary transition-colors">Pricing</Link>
         </div>
 
         <div className="hidden md:flex items-center gap-6">
           <Link href="/login" className="text-sm font-bold text-text-primary hover:text-accent-blue transition-colors">
             Sign In
           </Link>
-          <Link href="/signup" className="bg-accent-red hover:bg-red-500 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-accent-red/20 hover:-translate-y-0.5 transition-all">
-            Start Free
+          <Link href="/download" className="bg-accent-blue hover:bg-blue-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-accent-blue/20 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+            <Download className="w-4 h-4" /> Download
           </Link>
         </div>
 
         {/* Mobile Menu Button */}
         <button className="md:hidden text-text-primary" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          <div className="space-y-1.5">
-            <span className={`block w-6 h-0.5 bg-current transition-transform ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`block w-6 h-0.5 bg-current transition-opacity ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block w-6 h-0.5 bg-current transition-transform ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-          </div>
+          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
@@ -75,12 +66,12 @@ const Navbar = () => {
             className="md:hidden bg-bg-secondary border-b border-surface-2 overflow-hidden"
           >
             <div className="px-6 py-8 space-y-6">
-              <Link href="#products" className="block text-lg font-bold text-text-primary">Products</Link>
-              <Link href="#solutions" className="block text-lg font-bold text-text-primary">Solutions</Link>
-              <Link href="#testimonials" className="block text-lg font-bold text-text-primary">Testimonials</Link>
+              <Link href="#features" className="block text-lg font-bold text-text-primary" onClick={() => setIsMobileMenuOpen(false)}>Features</Link>
+              <Link href="#how-it-works" className="block text-lg font-bold text-text-primary" onClick={() => setIsMobileMenuOpen(false)}>How it Works</Link>
+              <Link href="#pricing" className="block text-lg font-bold text-text-primary" onClick={() => setIsMobileMenuOpen(false)}>Pricing</Link>
               <div className="pt-6 border-t border-surface-2 grid grid-cols-2 gap-4">
                 <Link href="/login" className="flex items-center justify-center py-3 rounded-lg bg-surface-2 text-text-primary font-bold">Sign In</Link>
-                <Link href="/signup" className="flex items-center justify-center py-3 rounded-lg bg-accent-red text-white font-bold">Start Free</Link>
+                <Link href="/download" className="flex items-center justify-center py-3 rounded-lg bg-accent-blue text-white font-bold">Download</Link>
               </div>
             </div>
           </motion.div>
@@ -126,7 +117,7 @@ const Hero = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-state-success opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-state-success"></span>
           </span>
-          <span className="font-mono text-xs text-text-secondary uppercase tracking-wider">Now in Public Beta — 6 AI Products Live</span>
+          <span className="font-mono text-xs text-text-secondary uppercase tracking-wider">Neato Voice Desktop v1.0 Live</span>
         </motion.div>
 
         <motion.h1
@@ -135,8 +126,8 @@ const Hero = () => {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.1] tracking-tight mb-8"
         >
-          AI Tools That <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-red via-accent-blue to-accent-cyan animate-hue">Actually Work</span><br />
-          For Your Business
+          Capture Your Thoughts.<br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-blue via-accent-cyan to-accent-green animate-hue">Refined by AI.</span>
         </motion.h1>
 
         <motion.p
@@ -145,7 +136,7 @@ const Hero = () => {
           transition={{ delay: 0.5 }}
           className="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed mb-10"
         >
-          From AI receptionists to image enhancement, Neato Ventures builds practical, production-ready AI products that solve real business problems — no PhD required.
+          Neato Voice instantly turns your spoken words into structured, polished text. No more "umms", "ahhs", or rambling notes. Just perfect clarity.
         </motion.p>
 
         <motion.div
@@ -154,30 +145,35 @@ const Hero = () => {
           transition={{ delay: 0.6 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
         >
-          <Link href="/signup" className="group h-12 px-8 rounded-lg bg-accent-red text-white font-bold flex items-center gap-2 hover:bg-red-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent-red/25 transition-all">
-            Start Free Trial <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <Link href="/download" className="group h-12 px-8 rounded-lg bg-accent-blue text-white font-bold flex items-center gap-2 hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent-blue/25 transition-all">
+            <Download className="w-4 h-4" /> Download for Windows
           </Link>
-          <button className="h-12 px-8 rounded-lg bg-surface-1/50 border border-white/10 text-text-primary font-bold flex items-center gap-2 hover:bg-surface-2 hover:border-white/20 transition-all">
-            <Play className="w-4 h-4 fill-current" /> Watch Demo
-          </button>
+          <Link href="/login" className="h-12 px-8 rounded-lg bg-surface-1/50 border border-white/10 text-text-primary font-bold flex items-center gap-2 hover:bg-surface-2 hover:border-white/20 transition-all">
+            My Dashboard
+          </Link>
         </motion.div>
 
+        {/* App Preview / Stats */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9 }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-8 py-8 border-t border-white/5"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="relative mx-auto max-w-4xl p-2 bg-surface-1/30 rounded-xl border border-white/10 backdrop-blur-sm shadow-2xl"
         >
-          {[
-            { label: 'AI Products', value: '6' },
-            { label: 'Uptime SLA', value: '99.9%' },
-            { label: 'API Calls/day', value: '10k+' }
-          ].map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className="font-display font-bold text-2xl sm:text-3xl text-text-primary">{stat.value}</div>
-              <div className="font-mono text-xs text-text-muted mt-1 uppercase">{stat.label}</div>
+          {/* Placeholder for App Interface or abstract visual */}
+          <div className="aspect-[16/9] bg-bg-secondary rounded-lg overflow-hidden relative flex items-center justify-center group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-bg-primary to-surface-2 opacity-80" />
+            <div className="relative z-10 text-center space-y-4">
+              <div className="inline-flex p-4 rounded-full bg-accent-red/20 text-accent-red mb-2 animate-pulse">
+                <Mic className="w-8 h-8" />
+              </div>
+              <div className="text-2xl font-display font-bold">"Generate a summary of the Q3 marketing plan..."</div>
+              <ArrowRight className="w-6 h-6 mx-auto text-text-secondary rotate-90" />
+              <div className="text-lg font-mono text-accent-green bg-surface-1/80 px-4 py-2 rounded-lg border border-accent-green/20">
+                &gt; Q3 Marketing Plan Summary generated.
+              </div>
             </div>
-          ))}
+          </div>
         </motion.div>
       </div>
 
@@ -187,27 +183,27 @@ const Hero = () => {
   );
 };
 
-const Products = () => {
-  const products = [
-    { name: "Neato Receptionist", tagline: "Your AI front desk, always on.", desc: "Handle calls 24/7 with natural language AI. Route, transcribe, schedule — all without missing a beat.", icon: <Phone className="w-6 h-6 text-white" />, color: "bg-[#0D7377]", link: "#", badge: "Flagship" },
-    { name: "AI Prompt Architect", tagline: "Craft perfect prompts, every time.", desc: "Design, test, and optimize AI prompts with our visual builder and analytics dashboard.", icon: <Code2 className="w-6 h-6 text-white" />, color: "bg-[#7C3AED]", link: "#" },
-    { name: "Neato Type", tagline: "Voice to text, refined by AI.", desc: "Transcribe meetings, calls, and notes with speaker detection and smart formatting.", icon: <Mic className="w-6 h-6 text-white" />, color: "bg-[#FF6B6B]", link: "#" },
-    { name: "Neato Leads", tagline: "AI-powered lead intelligence.", desc: "Identify, score, and qualify leads automatically. Integrate with your CRM in minutes.", icon: <Target className="w-6 h-6 text-white" />, color: "bg-[#10B981]", link: "#" },
-    { name: "AI Consulting", tagline: "Strategic AI Integration.", desc: "Expert guidance on AI adoption, custom model training, and workflow automation.", icon: <Handshake className="w-6 h-6 text-white" />, color: "bg-[#D4A843]", link: "#", badge: "Services" },
-    { name: "Neato ClearPix", tagline: "Enhance any image with AI.", desc: "Upscale, restore, and enhance images with state-of-the-art neural processing.", icon: <ImagePlus className="w-6 h-6 text-white" />, color: "bg-[#EC4899]", link: "#" },
+const Features = () => {
+  const features = [
+    { title: "Instant Transcription", desc: "Speak naturally and watch your words appear in real-time.", icon: <Mic className="w-6 h-6 text-white" />, color: "bg-accent-red" },
+    { title: "AI Refinement", desc: "Our AI engine cleans up filler words, fixes grammar, and formats your text automatically.", icon: <Wand2 className="w-6 h-6 text-white" />, color: "bg-accent-blue" },
+    { title: "Desktop Overlay", desc: "Always one click away. Record directly over any application without breaking flow.", icon: <Laptop className="w-6 h-6 text-white" />, color: "bg-accent-cyan" },
+    { title: "Custom Vocabulary", desc: "Teach Neato Voice your specific jargon, acronyms, and names.", icon: <Zap className="w-6 h-6 text-white" />, color: "bg-accent-gold" },
+    { title: "Secure & Private", desc: "Enterprise-grade encryption for your voice data and transcripts.", icon: <Shield className="w-6 h-6 text-white" />, color: "bg-product-consulting" },
+    { title: "Cloud Sync", desc: "Access your refined notes from any device via the web dashboard.", icon: <CheckCircle2 className="w-6 h-6 text-white" />, color: "bg-product-leads" },
   ];
 
   return (
-    <section id="products" className="py-24 sm:py-32 relative">
+    <section id="features" className="py-24 sm:py-32 relative bg-bg-secondary/30">
       <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
         <div className="text-center mb-16">
-          <span className="inline-block px-3 py-1 rounded-full bg-accent-blue/10 text-accent-blue font-mono text-xs font-bold mb-4 border border-accent-blue/20">Our Products</span>
-          <h2 className="font-display font-bold text-4xl sm:text-5xl mb-4 text-text-primary">Six Products. One Mission.</h2>
-          <p className="text-text-secondary text-lg max-w-2xl mx-auto">Each tool is purpose-built to solve a specific business challenge with practical AI — not hype.</p>
+          <span className="inline-block px-3 py-1 rounded-full bg-accent-blue/10 text-accent-blue font-mono text-xs font-bold mb-4 border border-accent-blue/20">Features</span>
+          <h2 className="font-display font-bold text-4xl sm:text-5xl mb-4 text-text-primary">More Than Just Dictation.</h2>
+          <p className="text-text-secondary text-lg max-w-2xl mx-auto">A complete voice workflow designed for professionals who value speed and clarity.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
@@ -217,26 +213,14 @@ const Products = () => {
               whileHover={{ y: -5 }}
               className="group relative bg-surface-1 border border-white/[0.06] rounded-2xl p-8 hover:border-white/[0.15] hover:shadow-2xl transition-all overflow-hidden"
             >
-              <div className={`absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity ${product.color}`} />
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity ${feature.color}`} />
 
-              <div className="flex justify-between items-start mb-6">
-                <div className={`w-12 h-12 rounded-xl ${product.color} flex items-center justify-center shadow-lg`}>
-                  {product.icon}
-                </div>
-                {product.badge && (
-                  <span className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono uppercase tracking-wider text-text-secondary">
-                    {product.badge}
-                  </span>
-                )}
+              <div className={`w-12 h-12 rounded-xl ${feature.color} flex items-center justify-center shadow-lg mb-6`}>
+                {feature.icon}
               </div>
 
-              <h3 className="font-display font-bold text-2xl text-text-primary mb-2">{product.name}</h3>
-              <div className={`font-mono text-xs font-bold mb-4 opacity-80`} style={{ color: product.color.replace('bg-', '') }}>{product.tagline}</div>
-              <p className="text-sm text-text-secondary leading-relaxed mb-6">{product.desc}</p>
-
-              <Link href={product.link} className="inline-flex items-center gap-2 text-sm font-bold hover:gap-3 transition-all" style={{ color: product.color.replace('bg-[', '').replace(']', '') }}>
-                Learn more <ArrowRight className="w-4 h-4" />
-              </Link>
+              <h3 className="font-display font-bold text-xl text-text-primary mb-3">{feature.title}</h3>
+              <p className="text-sm text-text-secondary leading-relaxed">{feature.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -246,21 +230,20 @@ const Products = () => {
 };
 
 const HowItWorks = () => (
-  <section className="py-24 relative bg-surface-1/30 border-y border-white/5">
+  <section id="how-it-works" className="py-24 relative bg-surface-1/30 border-y border-white/5">
     <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 text-center">
       <div className="mb-16">
-        <span className="inline-block px-3 py-1 rounded-full bg-accent-cream/10 text-accent-cream font-mono text-xs font-bold mb-4 border border-accent-cream/20">How It Works</span>
-        <h2 className="font-display font-bold text-4xl mb-4">Three Steps. Zero Friction.</h2>
+        <span className="inline-block px-3 py-1 rounded-full bg-accent-cream/10 text-accent-cream font-mono text-xs font-bold mb-4 border border-accent-cream/20">Workflow</span>
+        <h2 className="font-display font-bold text-4xl mb-4">From Voice to Value in Seconds.</h2>
       </div>
 
       <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">
-        {/* Connection Line (Desktop) */}
         <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-transparent via-surface-3 to-transparent" />
 
         {[
-          { step: "01", title: "Sign Up", desc: "Create your account and choose from our suite of AI products. No technical setup required.", icon: <UserPlus className="w-8 h-8 text-accent-blue" />, color: "bg-accent-blue" },
-          { step: "02", title: "Configure", desc: "Customize your AI tools to match your workflow. Integrate with your existing stack via API or native connectors.", icon: <Settings2 className="w-8 h-8 text-accent-gold" />, color: "bg-accent-gold" },
-          { step: "03", title: "Launch", desc: "Deploy to production and watch your business metrics improve. Scale effortlessly as you grow.", icon: <Rocket className="w-8 h-8 text-accent-cyan" />, color: "bg-accent-cyan" }
+          { step: "01", title: "Record", desc: "Press the global hotkey and start speaking naturally. No need to pause or over-enunciate.", icon: <Mic className="w-8 h-8 text-accent-red" />, color: "bg-surface-2 border-accent-red" },
+          { step: "02", title: "Refine", desc: "Our AI instantly processes your audio, restructuring it into clear, concise text.", icon: <Wand2 className="w-8 h-8 text-accent-blue" />, color: "bg-surface-2 border-accent-blue" },
+          { step: "03", title: "Action", desc: "Paste the result directly into Email, Slack, or Docs. Or save it to your dashboard.", icon: <CheckCircle2 className="w-8 h-8 text-accent-green" />, color: "bg-surface-2 border-accent-green" }
         ].map((item, i) => (
           <motion.div
             key={i}
@@ -270,8 +253,7 @@ const HowItWorks = () => (
             transition={{ delay: i * 0.2 }}
             className="relative flex flex-col items-center"
           >
-            <div className="w-24 h-24 rounded-2xl bg-surface-1 border border-surface-2 flex items-center justify-center mb-6 relative z-10 shadow-xl group hover:scale-105 transition-transform duration-300">
-              <div className={`absolute -top-3 -right-3 w-8 h-8 rounded-full ${item.color} flex items-center justify-center font-mono text-xs font-bold text-bg-primary border-2 border-bg-primary`}>{item.step}</div>
+            <div className={`w-24 h-24 rounded-2xl bg-surface-1 border-2 flex items-center justify-center mb-6 relative z-10 shadow-xl ${item.color.split(' ')[1]}`}>
               {item.icon}
             </div>
             <h3 className="font-display font-bold text-xl mb-3">{item.title}</h3>
@@ -283,86 +265,34 @@ const HowItWorks = () => (
   </section>
 );
 
-const Features = () => (
-  <section className="py-24 bg-bg-secondary/30">
-    <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
-      <div className="text-center mb-16">
-        <span className="inline-block px-3 py-1 rounded-full bg-accent-gold/10 text-accent-gold font-mono text-xs font-bold mb-4 border border-accent-gold/20">Why Neato</span>
-        <h2 className="font-display font-bold text-4xl">Built Different. On Purpose.</h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[
-          { title: "Lightning Fast Setup", desc: "Deploy standard AI agents in under 5 minutes.", icon: <Zap className="w-5 h-5 text-accent-gold" /> },
-          { title: "Enterprise Security", desc: "SOC 2 Type II compliant, AES-256 encryption.", icon: <Shield className="w-5 h-5 text-accent-blue" /> },
-          { title: "Works Everywhere", desc: "Native integrations for Slack, Teams, and Web.", icon: <Globe className="w-5 h-5 text-accent-cyan" /> },
-          { title: "Modular by Design", desc: "Mix and match products to build your perfect stack.", icon: <Puzzle className="w-5 h-5 text-product-prompt" /> },
-          { title: "Built-in Analytics", desc: "Real-time insights on your AI usage and ROI.", icon: <BarChart3 className="w-5 h-5 text-product-leads" /> },
-          { title: "Human-First AI", desc: "Designed to augment your team, not replace them.", icon: <HeartHandshake className="w-5 h-5 text-accent-red" /> },
-        ].map((feat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-surface-1/50 hover:bg-surface-1 border border-white/5 rounded-2xl p-6 transition-colors"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="p-2 rounded-lg bg-white/5">
-                {feat.icon}
-              </div>
-              <h3 className="font-display font-semibold text-lg">{feat.title}</h3>
-            </div>
-            <p className="text-text-secondary text-sm">{feat.desc}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="mt-16 pt-8 border-t border-white/5 flex justify-center">
-        <div className="font-mono text-xs text-text-muted opacity-60 tracking-[0.2em] uppercase">React · TypeScript · Python · TensorFlow · AWS · Kubernetes</div>
-      </div>
-    </div>
-  </section>
-);
-
 const Testimonials = () => (
   <section id="testimonials" className="py-24">
     <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
       <div className="text-center mb-16">
-        <span className="inline-block px-3 py-1 rounded-full bg-accent-cyan/10 text-accent-cyan font-mono text-xs font-bold mb-4 border border-accent-cyan/20">Testimonials</span>
-        <h2 className="font-display font-bold text-4xl">Trusted by Teams Who Ship.</h2>
+        <h2 className="font-display font-bold text-4xl">Loved by Productive Humans.</h2>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[
-          { quote: "Neato Receptionist handled 500 calls in our first week. It paid for itself in day one.", author: "Sarah Jenkins", role: "Ops Director", company: "Meridian Legal", product: "Receptionist" },
-          { quote: "The API is incredibly stable. We integrated Neato Leads into our CRM and saw conversion double.", author: "Mike Ross", role: "CTO", company: "TechFlow Labs", product: "Leads" },
-          { quote: "Finally, AI tools that don't feel like a science project. Polished, fast, and effective.", author: "Elena Wu", role: "Product Lead", company: "Apex Commerce", product: "Prompt Architect" }
-        ].map((t, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.15 }}
-            className="bg-surface-1/50 p-8 rounded-2xl border border-white/5"
-          >
-            <div className="flex gap-1 mb-4">
-              {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-4 h-4 text-accent-gold fill-current" />)}
+      {/* Simple testimonial row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="bg-surface-1/50 p-8 rounded-2xl border border-white/5">
+          <p className="text-lg text-text-primary mb-4">"Neato Voice has completely replaced typing for my first drafts. It's shockingly accurate."</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-accent-blue/20 flex items-center justify-center font-bold text-accent-blue">JD</div>
+            <div>
+              <div className="font-bold text-sm">James Doe</div>
+              <div className="text-xs text-text-muted">Product Manager</div>
             </div>
-            <p className="text-lg text-text-primary mb-6 leading-relaxed">"{t.quote}"</p>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-surface-2 flex items-center justify-center font-bold text-xs">
-                {t.author.charAt(0)}{t.author.split(' ')[1].charAt(0)}
-              </div>
-              <div>
-                <div className="font-bold text-sm">{t.author}</div>
-                <div className="text-xs text-text-muted">{t.role}, {t.company}</div>
-              </div>
+          </div>
+        </div>
+        <div className="bg-surface-1/50 p-8 rounded-2xl border border-white/5">
+          <p className="text-lg text-text-primary mb-4">"The AI refinement is the killer feature. It turns my ramblings into professional emails instantly."</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-accent-red/20 flex items-center justify-center font-bold text-accent-red">AS</div>
+            <div>
+              <div className="font-bold text-sm">Anna Smith</div>
+              <div className="text-xs text-text-muted">Marketing Director</div>
             </div>
-          </motion.div>
-        ))}
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -383,25 +313,21 @@ const CTA = () => (
       </motion.div>
 
       <h2 className="font-display font-bold text-4xl sm:text-5xl mb-6">
-        Ready to Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-red to-accent-blue">Something Neato?</span>
+        Stop Typing. <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-red to-accent-blue">Start Speaking.</span>
       </h2>
       <p className="text-xl text-text-secondary mb-10 max-w-xl mx-auto">
-        Join thousands of businesses using Neato Ventures to power their next-gen AI workflows.
+        Download Neato Voice today and experience the future of dictation.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <Link href="/signup" className="h-14 px-8 rounded-full bg-accent-red text-white font-bold text-lg flex items-center gap-2 hover:bg-red-500 hover:scale-105 transition-all shadow-xl shadow-accent-red/20">
-          Get Started Free <ArrowRight className="w-5 h-5" />
-        </Link>
-        <Link href="/contact" className="h-14 px-8 rounded-full border border-surface-3 text-text-primary font-bold text-lg flex items-center hover:bg-surface-2 transition-all">
-          Talk to Sales
+        <Link href="/download" className="h-14 px-8 rounded-full bg-accent-blue text-white font-bold text-lg flex items-center gap-2 hover:bg-blue-600 hover:scale-105 transition-all shadow-xl shadow-accent-blue/20">
+          <Download className="w-5 h-5" /> Download for Windows
         </Link>
       </div>
 
       <div className="mt-8 flex items-center justify-center gap-6 text-xs font-mono text-text-muted">
-        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> Free 14-day trial</span>
-        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> No credit card required</span>
-        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> SOC 2 Compliant</span>
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> Windows 10/11</span>
+        <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3 text-state-success" /> Free Trial Available</span>
       </div>
     </div>
   </section>
@@ -410,49 +336,23 @@ const CTA = () => (
 const Footer = () => (
   <footer className="border-t border-surface-2 bg-bg-primary pt-20 pb-10">
     <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
-        <div className="col-span-2">
-          <div className="flex items-center gap-3 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16 text-center md:text-left">
+        <div>
+          <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
             <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10">
               <img src="/neato-logo.svg" alt="Neato" className="w-full h-full object-cover" />
             </div>
-            <span className="font-display font-bold text-xl">Neato Ventures</span>
+            <span className="font-display font-bold text-xl">Neato Voice</span>
           </div>
-          <p className="text-text-secondary text-sm max-w-xs mb-6">
-            Building the operating system for the AI-native enterprise.
-            Practical, powerful, and always neato.
+          <p className="text-text-secondary text-sm max-w-xs">
+            The AI voice recorder for professionals.
           </p>
-          <div className="flex gap-3">
-            {/* Social placeholders */}
-            {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-lg bg-surface-1 hover:bg-surface-2 transition-colors" />)}
-          </div>
         </div>
 
-        <div>
-          <h4 className="font-bold mb-6">Products</h4>
-          <ul className="space-y-4 text-sm text-text-secondary">
-            <li><a href="#" className="hover:text-accent-blue">Receptionist</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Prompt Architect</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Type</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Leads</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-bold mb-6">Company</h4>
-          <ul className="space-y-4 text-sm text-text-secondary">
-            <li><a href="#" className="hover:text-accent-blue">About</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Careers</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Blog</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Contact</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-bold mb-6">Legal</h4>
-          <ul className="space-y-4 text-sm text-text-secondary">
-            <li><a href="#" className="hover:text-accent-blue">Privacy</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Terms</a></li>
-            <li><a href="#" className="hover:text-accent-blue">Security</a></li>
-          </ul>
+        <div className="flex gap-8 text-sm text-text-secondary font-medium">
+          <Link href="/privacy" className="hover:text-text-primary">Privacy</Link>
+          <Link href="/terms" className="hover:text-text-primary">Terms</Link>
+          <Link href="mailto:support@neatoventures.com" className="hover:text-text-primary">Support</Link>
         </div>
       </div>
 
@@ -472,9 +372,8 @@ export default function LandingPage() {
     <div className="min-h-screen bg-bg-primary text-text-primary font-body selection:bg-accent-blue/30 selection:text-white overflow-x-hidden">
       <Navbar />
       <Hero />
-      <Products />
-      <HowItWorks />
       <Features />
+      <HowItWorks />
       <Testimonials />
       <CTA />
       <Footer />
