@@ -1,13 +1,18 @@
 // desktop/main.js
 // This is the main Electron process - it controls the app window and system integration
 
-const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, nativeImage, dialog, protocol, net } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 // Fix for background recording/throttling when minimized
 app.commandLine.appendSwitch('disable-background-timer-throttling');
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
+// Register custom protocol scheme
+protocol.registerSchemesAsPrivileged([
+    { scheme: 'app', privileges: { secure: true, standard: true, supportFetchAPI: true, corsEnabled: true } }
+]);
 
 const path = require('path');
 const Store = require('electron-store');
@@ -98,7 +103,6 @@ function createWindow() {
         // Load the live production web app
         log('Loading production URL');
         mainWindow.loadURL('https://neato-voice.netlify.app');
-        // mainWindow.webContents.openDevTools();
     }
 
     // Minimize to tray instead of closing
@@ -147,18 +151,11 @@ function createOverlayWindow() {
     if (process.env.NODE_ENV === 'development') {
         overlayWindow.loadURL('http://localhost:3000/overlay');
     } else {
-        // Fix: Next.js export creates overlay/index.html, not overlay.html
-        const overlayPath = path.join(__dirname, 'web-build', 'overlay', 'index.html');
-        log(`Loading Overlay from: ${overlayPath}`);
-
-        overlayWindow.loadFile(overlayPath)
+        // Load via app:// protocol
+        log(`Loading Overlay via app://`);
+        overlayWindow.loadURL('app://neato-voice/overlay/index.html')
             .then(() => log('[Overlay] Loaded successfully'))
-            .catch(e => {
-                log(`[Overlay] Failed to load overlay file: ${e}`);
-                // Fallback try overlay.html just in case config changes
-                const fallback = path.join(__dirname, 'web-build', 'overlay.html');
-                overlayWindow.loadFile(fallback).catch(e2 => log(`[Overlay] Failed fallback: ${e2}`));
-            });
+            .catch(e => log(`[Overlay] Failed to load: ${e}`));
     }
 
     // Ensure it's ready
@@ -180,6 +177,12 @@ function createTray() {
         console.error("Failed to load tray icon", e);
         return;
     }
+
+    // Log version at startup
+    const packageJson = require('./package.json');
+    log(`========================================`);
+    log(`Neato Voice Desktop v${packageJson.version}`);
+    log(`========================================`);
 
     tray = new Tray(trayIcon.resize({ width: 16, height: 16 }));
     tray.setToolTip('Neato Voice - Click to open');
@@ -354,6 +357,48 @@ if (!gotTheLock) {
     });
 
     app.whenReady().then(() => {
+        // Register app:// protocol to serve from web-build
+        protocol.handle('app', async (req) => {
+            try {
+                const { pathname } = new URL(req.url);
+                log(`[Protocol] Request: ${req.url} -> pathname: ${pathname}`);
+
+                // Strip leading slash
+                const resolvedPath = pathname.replace(/^\//, '');
+
+                let targetPath = path.join(__dirname, 'web-build', resolvedPath);
+
+                // If it's likely a directory (no extension), look for index.html
+                if (!path.extname(targetPath)) {
+                    targetPath = path.join(targetPath, 'index.html');
+                }
+
+                log(`[Protocol] Resolved to: ${targetPath}`);
+
+                // Check if file exists
+                if (!fs.existsSync(targetPath)) {
+                    log(`[Protocol] File not found: ${targetPath}`);
+                    // Return 404 response
+                    return new Response('Not Found', {
+                        status: 404,
+                        headers: { 'content-type': 'text/plain' }
+                    });
+                }
+
+                // Use net.fetch to serve the file
+                const fileUrl = require('url').pathToFileURL(targetPath).toString();
+                log(`[Protocol] Serving: ${fileUrl}`);
+                return net.fetch(fileUrl);
+
+            } catch (error) {
+                log(`[Protocol] Error: ${error.message}`);
+                return new Response(`Error: ${error.message}`, {
+                    status: 500,
+                    headers: { 'content-type': 'text/plain' }
+                });
+            }
+        });
+
         log('App Ready');
         createWindow();
         createOverlayWindow();
@@ -574,6 +619,19 @@ ipcMain.handle('set-retention-settings', (event, period) => {
 });
 
 
+// Handle Deepgram Key
+ipcMain.handle('get-deepgram-key', () => {
+    // In a real app we might want to fetch a temporary key from a server here
+    // or return the env key if we trust the local environment.
+    // For Desktop, we trust the user.
+    const key = process.env.DEEPGRAM_API_KEY || process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
+    if (!key) {
+        log('[Deepgram] Error: No DEEPGRAM_API_KEY found in env');
+        return null;
+    }
+    return key;
+});
+
 // Handle AI Refinement
 ipcMain.handle('refine-text', async (event, text, options = {}) => {
     try {
@@ -606,17 +664,36 @@ ipcMain.handle('refine-text', async (event, text, options = {}) => {
 
         const anthropic = new Anthropic({ apiKey });
 
-        let prompt = `Refine the following transcribed text.
-Rules:
-1. Remove filler words (um, uh, ah, like, you know).
-2. Fix grammar and punctuation.
-3. If the user corrects themselves, use the corrected version.
-4. **CRITICAL:** If there are 3+ items or actions, YOU MUST format them as a bulleted list.
-   - Example: "I need to X, Y, and Z" -> 
-     * X
-     * Y
-     * Z
-5. Output ONLY the refined text, no preamble.`;
+        let prompt = `You are a transcription formatter. Your ONLY job is to:
+1. Remove filler words (um, uh, ah, like, you know)
+2. Fix grammar and punctuation
+3. **FORMAT LISTS AS BULLETS** - This is CRITICAL
+
+WHEN TO CREATE BULLET LISTS:
+- If you see 2+ items separated by commas or "and", YOU MUST format as bullets
+- Each bullet starts with "- " (dash + space) on its own line
+
+EXAMPLES (study these carefully):
+
+INPUT: "I need to mow the lawn, get gas in the car and call Mom"
+OUTPUT:
+I need to:
+- Mow the lawn
+- Get gas in the car  
+- Call Mom
+
+INPUT: "Buy apples, bananas and cheese"
+OUTPUT:
+Buy:
+- Apples
+- Bananas
+- Cheese
+
+INPUT: "hey um send me that file from yesterday"
+OUTPUT:
+Hey, send me that file from yesterday.
+
+DO NOT output plain text with commas when there are multiple items. ALWAYS use bullets for lists.`;
 
         if (isTranslation) {
             log(`[Refinement] Translating to ${translation.targetLanguage}`);
@@ -627,17 +704,26 @@ Rules:
 3. Output ONLY the translated text, no preamble or explanations.`;
         }
 
-        prompt += `\n\nText to refine: "${text}"`;
-
         log('[Refinement] Calling Claude API...');
         const response = await anthropic.messages.create({
-            model: "claude-3-haiku-20240307",
-            max_tokens: 1024,
-            messages: [{ role: "user", content: prompt }]
+            model: "claude-3-5-sonnet-20241022",
+            max_tokens: 2048,
+            system: prompt,  // Use system message for better instruction-following
+            messages: [{
+                role: "user",
+                content: `Refine this: "${text}"`
+            }]
         });
 
         const refinedText = response.content[0].text.trim();
         log(`[Refinement] Success. Result length: ${refinedText.length}`);
+        log(`[Refinement] AI Output (first 200 chars): ${refinedText.substring(0, 200)}`);
+
+        // Log full output for debugging (can be disabled later)
+        console.log('[Refinement] FULL AI OUTPUT:');
+        console.log('---START---');
+        console.log(refinedText);
+        console.log('---END---');
 
         // Update Correction Stats
         try {

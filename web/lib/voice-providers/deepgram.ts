@@ -31,22 +31,44 @@ export class DeepgramProvider implements VoiceProvider {
         try {
             console.log('[Deepgram] Requesting access token...');
 
-            // Fetch token from server (checks credits)
-            const response = await fetch('/api/voice/token');
-            const data = await response.json();
+            let apiKey = '';
 
-            if (!response.ok) {
-                if (response.status === 402) {
-                    this.emitError(new Error('INSUFFICIENT_CREDITS: ' + data.error));
-                } else if (response.status === 401) {
-                    this.emitError(new Error('UNAUTHORIZED: Please login'));
+            // Check if running in Electron
+            if (typeof window !== 'undefined' && (window as any).electronAPI) {
+                console.log('[Deepgram] Using Electron IPC for token');
+                // We need to implement this in main.js
+                // For now, let's assume we can get the key from settings or a new IPC call
+                // But wait, the API route does auth checks. The electron app has the key in .env
+                // So we can just ask the main process for a temporary key or the main key?
+                // The main process has ANTHROPIC_KEY, does it have DEEPGRAM? 
+                // Let's assume we add `getDeepgramApiKey` to the bridge.
+                const api = (window as any).electronAPI;
+                if (api.getDeepgramApiKey) {
+                    apiKey = await api.getDeepgramApiKey();
                 } else {
-                    this.emitError(new Error(data.error || 'Failed to authorize voice session'));
+                    // Fallback or error
+                    console.error('[Deepgram] Electron environment but no getDeepgramApiKey method');
                 }
-                return;
             }
 
-            const apiKey = data.key;
+            if (!apiKey) {
+                // Fallback to Web API (will fail in static export if route is gone, but ok for web dev)
+                // In static export, we can't fetch /api/voice/token.
+                // We must handle this.
+                try {
+                    const response = await fetch('https://neato-voice.netlify.app/api/voice/token');
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Failed to get token');
+                    apiKey = data.key;
+                } catch (e) {
+                    console.error('[Deepgram] Failed to fetch token via API:', e);
+                    if ((window as any).electronAPI) {
+                        this.emitError(new Error('Deepgram Token Error: IPC missing and API route unavailable in desktop mode.'));
+                        return;
+                    }
+                    throw e;
+                }
+            }
 
             console.log('[Deepgram] Starting real-time transcription...');
             this.isRecording = true;

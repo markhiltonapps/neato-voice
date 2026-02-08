@@ -20,6 +20,8 @@ interface ElectronAPI {
     }>;
     updateStats: (data: { durationMs: number; wordCount: number }) => Promise<any>;
 
+    getDeepgramApiKey?: () => Promise<string>;
+
     getDictionary: () => Promise<string[]>;
     addDictionaryWord: (word: string) => Promise<string[]>;
     removeDictionaryWord: (word: string) => Promise<string[]>;

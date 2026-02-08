@@ -44,6 +44,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getStats: () => ipcRenderer.invoke('get-stats'),
     updateStats: (data) => ipcRenderer.invoke('update-stats', data),
 
+    // Auth/Keys
+    getDeepgramApiKey: () => ipcRenderer.invoke('get-deepgram-key'),
+
     // Dictionary
     getDictionary: () => ipcRenderer.invoke('get-dictionary'),
     addDictionaryWord: (word) => ipcRenderer.invoke('add-dictionary-word', word),
