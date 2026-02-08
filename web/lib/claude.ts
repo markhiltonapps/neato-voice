@@ -2,7 +2,7 @@ export async function refineTranscription(rawText: string): Promise<string> {
     if (!rawText || !rawText.trim()) return '';
 
     try {
-        const response = await fetch('https://neato-voice.netlify.app/api/refine', {
+        const response = await fetch('https://neato-voice.netlify.app/api/refine/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: rawText }),
