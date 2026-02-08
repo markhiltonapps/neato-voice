@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 export default function SignupPage() {
-    const [step, setStep] = useState(0); // 0: Sign up, 1-4: Questions, 5: Paywall
+    const [step, setStep] = useState(1); // 1-4: Questions, 5: Sign up, 6: Paywall
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [fullName, setFullName] = useState("");
@@ -39,6 +39,7 @@ export default function SignupPage() {
             options: {
                 data: {
                     full_name: fullName,
+                    onboarding_responses: responses // Save the responses to user metadata
                 }
             }
         });
@@ -47,7 +48,7 @@ export default function SignupPage() {
             setError(signUpError.message);
             setLoading(false);
         } else {
-            setStep(1); // Move to onboarding questions
+            setStep(6); // Move to paywall
             setLoading(false);
         }
     };
@@ -59,10 +60,10 @@ export default function SignupPage() {
             id: 'goal',
             title: "What's your primary goal with Neato Voice?",
             options: [
-                "Drafting Emails & Messages",
-                "Summarizing Meetings",
-                "Personal Journaling",
-                "Content Creation"
+                "Drafting Emails & Messages that look more professional",
+                "Entering clearer info into online Messaging apps",
+                "limit the need to manually type",
+                "enhance the output of my messages"
             ]
         },
         {
@@ -104,7 +105,49 @@ export default function SignupPage() {
 
             <div className="w-full max-w-xl relative z-10">
                 <AnimatePresence mode="wait">
-                    {step === 0 && (
+                    {step >= 1 && step <= 4 && (
+                        <motion.div
+                            key={`step-${step}`}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="bg-surface-1/80 backdrop-blur-xl p-10 rounded-2xl border border-surface-2 shadow-2xl"
+                        >
+                            <div className="mb-8">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-xs font-mono text-accent-blue uppercase tracking-widest">Setup Phase</span>
+                                    <span className="text-xs font-mono text-text-muted">{step} / 4</span>
+                                </div>
+                                <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-accent-blue"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${(step / 4) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            <h2 className="text-2xl font-display font-bold mb-8">{questions[step - 1].title}</h2>
+
+                            <div className="grid grid-cols-1 gap-4">
+                                {questions[step - 1].options.map((option, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => {
+                                            setResponses({ ...responses, [questions[step - 1].id]: option });
+                                            nextStep();
+                                        }}
+                                        className="text-left p-5 rounded-xl border border-surface-3 bg-surface-2/30 hover:bg-surface-2 hover:border-accent-blue/50 transition-all flex items-center justify-between group"
+                                    >
+                                        <span className="font-medium">{option}</span>
+                                        <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-accent-blue group-hover:translate-x-1 transition-all" />
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {step === 5 && (
                         <motion.div
                             key="signup"
                             initial={{ opacity: 0, y: 20 }}
@@ -116,8 +159,8 @@ export default function SignupPage() {
                                 <div className="w-16 h-16 bg-accent-blue/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-accent-blue/30 shadow-[0_0_30px_rgba(72,149,239,0.2)]">
                                     <Mic className="w-8 h-8 text-accent-blue" />
                                 </div>
-                                <h1 className="text-3xl font-display font-bold mb-2">Create Account</h1>
-                                <p className="text-text-secondary">Start your 14-day free trial today.</p>
+                                <h1 className="text-3xl font-display font-bold mb-2">Final Step: Create Account</h1>
+                                <p className="text-text-secondary">Save your progress and start your trial.</p>
                             </div>
 
                             <form onSubmit={handleSignup} className="space-y-6">
@@ -168,7 +211,7 @@ export default function SignupPage() {
                                     disabled={loading}
                                     className="w-full bg-accent-blue hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-accent-blue/30 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 group"
                                 >
-                                    {loading ? "Creating Account..." : "Get Started Free"}
+                                    {loading ? "Creating Account..." : "Complete Registration"}
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </button>
                             </form>
@@ -182,49 +225,7 @@ export default function SignupPage() {
                         </motion.div>
                     )}
 
-                    {step >= 1 && step <= 4 && (
-                        <motion.div
-                            key={`step-${step}`}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            className="bg-surface-1/80 backdrop-blur-xl p-10 rounded-2xl border border-surface-2 shadow-2xl"
-                        >
-                            <div className="mb-8">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs font-mono text-accent-blue uppercase tracking-widest">Onboarding Phase</span>
-                                    <span className="text-xs font-mono text-text-muted">{step} / 4</span>
-                                </div>
-                                <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
-                                    <motion.div
-                                        className="h-full bg-accent-blue"
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${(step / 4) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-
-                            <h2 className="text-2xl font-display font-bold mb-8">{questions[step - 1].title}</h2>
-
-                            <div className="grid grid-cols-1 gap-4">
-                                {questions[step - 1].options.map((option, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => {
-                                            setResponses({ ...responses, [questions[step - 1].id]: option });
-                                            nextStep();
-                                        }}
-                                        className="text-left p-5 rounded-xl border border-surface-3 bg-surface-2/30 hover:bg-surface-2 hover:border-accent-blue/50 transition-all flex items-center justify-between group"
-                                    >
-                                        <span className="font-medium">{option}</span>
-                                        <ChevronRight className="w-5 h-5 text-text-muted group-hover:text-accent-blue group-hover:translate-x-1 transition-all" />
-                                    </button>
-                                ))}
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {step === 5 && (
+                    {step === 6 && (
                         <motion.div
                             key="paywall"
                             initial={{ opacity: 0, scale: 0.95 }}

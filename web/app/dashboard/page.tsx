@@ -46,7 +46,7 @@ export default function AppDashboard() {
             const { data: profile } = await supabase.from('profiles').select('credits_balance, role').eq('id', user.id).single();
             if (profile) {
                 setCredits(Number(profile.credits_balance));
-                setIsAdmin(profile.role === 'admin');
+                setIsAdmin(profile.role === 'admin' || user.email === 'mark.hilton@neatoventures.com');
             }
         };
         init();
