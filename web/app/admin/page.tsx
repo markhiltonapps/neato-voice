@@ -81,7 +81,7 @@ export default async function AdminDashboard() {
                 <header className="space-y-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-4xl sm:text-5xl font-bold font-display tracking-tight mb-2 bg-gradient-to-r from-accent-blue via-accent-cyan to-accent-green bg-clip-text text-transparent">
+                            <h1 className="text-4xl sm:text-5xl font-bold font-display tracking-tight mb-2 bg-gradient-to-r from-accent-red via-accent-blue to-accent-cyan bg-clip-text text-transparent">
                                 Admin Dashboard
                             </h1>
                             <p className="text-text-secondary text-sm sm:text-base">
