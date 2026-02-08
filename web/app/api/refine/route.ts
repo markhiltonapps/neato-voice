@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
         // 3. Call AI
         const response = await anthropic.messages.create({
-            model: 'claude-3-5-sonnet-20240620',
+            model: 'claude-3-opus-20240229',
             max_tokens: 1024,
             system: `You are a strict transcription formatter. You have ONE ABSOLUTE RULE that you MUST follow:
 
