@@ -69,100 +69,98 @@ export default async function AdminDashboard() {
     const activeUsers = profiles?.filter(p => p.subscription_status === 'active').length || 0;
 
     return (
-        <div className="min-h-screen bg-vault-navy p-8 font-mono text-vault-paper overflow-x-hidden">
-            <div className="max-w-7xl mx-auto space-y-8">
+        <div className="min-h-screen bg-bg-primary p-6 sm:p-8 font-body text-text-primary overflow-x-hidden relative">
+            {/* Background Effects */}
+            <div className="absolute inset-0 bg-gradient-to-br from-bg-primary via-bg-tertiary to-bg-primary opacity-50 pointer-events-none" />
+            <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-accent-blue/5 blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-accent-red/3 blur-[100px] pointer-events-none" />
+
+            <div className="max-w-7xl mx-auto space-y-8 relative z-10">
 
                 {/* Header */}
-                <header className="border-b-2 border-atom-green pb-6">
-                    <div className="flex items-center justify-between mb-4">
+                <header className="space-y-4">
+                    <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-4xl font-bold text-atom-green text-glow mb-2">OVERSEER TERMINAL</h1>
-                            <p className="text-sm text-vault-dust tracking-widest uppercase">
-                                Administrator Level 5 • Access Granted
+                            <h1 className="text-4xl sm:text-5xl font-bold font-display tracking-tight mb-2 bg-gradient-to-r from-accent-blue via-accent-cyan to-accent-green bg-clip-text text-transparent">
+                                Admin Dashboard
+                            </h1>
+                            <p className="text-text-secondary text-sm sm:text-base">
+                                System Overview & User Management
                             </p>
                         </div>
                         <a
                             href="/dashboard"
-                            className="px-4 py-2 border border-atom-green text-atom-green hover:bg-atom-green hover:text-vault-navy transition-all duration-200 text-sm font-bold tracking-wider uppercase flex items-center gap-2"
+                            className="px-4 py-2 rounded-lg bg-surface-1/50 border border-white/10 text-text-primary font-medium flex items-center gap-2 hover:bg-surface-2 hover:border-white/20 hover:-translate-y-0.5 transition-all duration-200 shadow-lg"
                         >
-                            <span>←</span> Back to Dashboard
+                            <span>←</span> Dashboard
                         </a>
                     </div>
-                    <div className="flex justify-end items-center gap-6">
-                        <div className="flex items-center gap-2 text-vault-rust animate-pulse">
-                            <span className="w-2 h-2 bg-vault-rust rounded-full"></span>
-                            SECURE CONNECTION LIVE
+                    <div className="flex items-center gap-4 text-xs text-text-muted">
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 bg-state-success rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
+                            System Online
                         </div>
-                        <div className="text-xl font-bold bg-vault-charcoal px-3 py-1 rounded border border-vault-olive/30">
-                            {new Date().toLocaleDateString()}
-                        </div>
+                        <span>•</span>
+                        <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                     </div>
                 </header>
 
-                {/* Sub-Navigation */}
-                <div className="flex justify-end mb-4 border-b border-vault-olive/10 pb-2">
-                    <a
-                        href="/admin/releases"
-                        className="text-xs uppercase tracking-widest text-atom-teal border border-atom-teal/30 px-3 py-1 hover:bg-atom-teal hover:text-vault-navy transition-colors flex items-center gap-2"
-                    >
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        Release Logistics
-                    </a>
-                </div>
-
-                {/* Business Overview Panels */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-vault-charcoal/50 border border-vault-olive p-6 rounded-lg relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-40 transition-opacity">
-                            <svg className="w-16 h-16 text-atom-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                {/* Business Overview Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                    <div className="bg-surface-1/50 backdrop-blur-sm border border-surface-2 rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-accent-blue/10">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent-blue/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                        <div className="relative">
+                            <div className="text-text-muted text-xs font-medium uppercase tracking-wider mb-2">Total Users</div>
+                            <div className="text-4xl font-bold font-display text-accent-blue mb-1">{totalUsers}</div>
+                            <div className="text-xs text-text-secondary">Registered accounts</div>
                         </div>
-                        <div className="text-vault-dust text-xs uppercase tracking-widest mb-2">Total Users</div>
-                        <div className="text-4xl font-bold text-atom-teal">{totalUsers}</div>
                     </div>
 
-                    <div className="bg-vault-charcoal/50 border border-vault-olive p-6 rounded-lg relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-40 transition-opacity">
-                            <svg className="w-16 h-16 text-atom-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div className="bg-surface-1/50 backdrop-blur-sm border border-surface-2 rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-state-success/10">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-state-success/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                        <div className="relative">
+                            <div className="text-text-muted text-xs font-medium uppercase tracking-wider mb-2">Active Subscriptions</div>
+                            <div className="text-4xl font-bold font-display text-state-success mb-1">{activeUsers}</div>
+                            <div className="text-xs text-text-secondary">Paid subscribers</div>
                         </div>
-                        <div className="text-vault-dust text-xs uppercase tracking-widest mb-2">Active Subscriptions</div>
-                        <div className="text-4xl font-bold text-atom-green text-glow">{activeUsers}</div>
                     </div>
 
-                    <div className="bg-vault-charcoal/50 border border-vault-olive p-6 rounded-lg relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-40 transition-opacity">
-                            <svg className="w-16 h-16 text-atom-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div className="bg-surface-1/50 backdrop-blur-sm border border-surface-2 rounded-2xl p-6 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-accent-gold/10">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent-gold/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+                        <div className="relative">
+                            <div className="text-text-muted text-xs font-medium uppercase tracking-wider mb-2">Total Credits</div>
+                            <div className="text-4xl font-bold font-display text-accent-gold mb-1">${totalRevenue.toFixed(2)}</div>
+                            <div className="text-xs text-text-secondary">System balance</div>
                         </div>
-                        <div className="text-vault-dust text-xs uppercase tracking-widest mb-2">System Credits</div>
-                        <div className="text-4xl font-bold text-atom-amber">${totalRevenue.toFixed(2)}</div>
                     </div>
                 </div>
 
                 {/* User Database Table */}
-                <section className="bg-vault-charcoal/80 border border-vault-olive rounded-lg overflow-hidden shadow-2xl backdrop-blur-sm">
-                    <div className="p-4 bg-vault-navy/50 border-b border-vault-olive/50 flex justify-between items-center">
-                        <h2 className="text-lg text-atom-amber uppercase tracking-widest flex items-center gap-2">
-                            <span className="w-2 h-2 bg-atom-amber animate-pulse rounded-full"></span>
-                            User Database
-                        </h2>
-                        <div className="flex gap-2 text-xs">
-                            <span className="px-2 py-1 bg-vault-charcoal border border-vault-olive rounded text-vault-dust hover:text-white cursor-pointer transition-colors">EXPORT CSV</span>
+                <section className="bg-surface-1/50 backdrop-blur-sm border border-surface-2 rounded-2xl overflow-hidden shadow-2xl">
+                    <div className="p-4 sm:p-6 border-b border-surface-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-bold font-display text-text-primary mb-1">User Directory</h2>
+                            <p className="text-sm text-text-secondary">Manage user accounts and permissions</p>
                         </div>
+                        <button className="px-4 py-2 rounded-lg bg-accent-blue/10 border border-accent-blue/20 text-accent-blue hover:bg-accent-blue/20 transition-all text-sm font-medium">
+                            Export CSV
+                        </button>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-vault-charcoal text-vault-olive uppercase text-[10px] tracking-wider border-b border-vault-olive">
-                                    <th className="p-3">User ID</th>
-                                    <th className="p-3">Identity</th>
-                                    <th className="p-3">Usage Metrics</th>
-                                    <th className="p-3">Balance</th>
-                                    <th className="p-3">Plan Tier</th>
-                                    <th className="p-3">Status</th>
-                                    <th className="p-3 text-right">Controls</th>
+                                <tr className="bg-surface-2/50 text-text-muted uppercase text-xs tracking-wider border-b border-surface-2">
+                                    <th className="p-3 sm:p-4 font-medium">User ID</th>
+                                    <th className="p-3 sm:p-4 font-medium">Identity</th>
+                                    <th className="p-3 sm:p-4 font-medium">Usage Metrics</th>
+                                    <th className="p-3 sm:p-4 font-medium">Balance</th>
+                                    <th className="p-3 sm:p-4 font-medium">Plan Tier</th>
+                                    <th className="p-3 sm:p-4 font-medium">Status</th>
+                                    <th className="p-3 sm:p-4 font-medium text-right">Controls</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-vault-olive/10">
+                            <tbody className="divide-y divide-surface-2/50">
                                 {profiles?.map((profile) => (
                                     <UserRow
                                         key={profile.id}

@@ -57,38 +57,46 @@ export function UserRow({ profile, usageStats = { totalWords: 0, lastActive: nul
     };
 
     const formatDate = (dateString: string | null) => {
-        if (!dateString) return 'NEVER';
-        return new Date(dateString).toLocaleDateString() + ' ' + new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        if (!dateString) return 'Never';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const tierColors: Record<string, string> = {
+        free: 'bg-surface-2 text-text-muted',
+        trial: 'bg-accent-blue/10 text-accent-blue border-accent-blue/20',
+        pro: 'bg-accent-cyan/10 text-accent-cyan border-accent-cyan/20',
+        enterprise: 'bg-accent-gold/10 text-accent-gold border-accent-gold/20'
     };
 
     return (
-        <tr className={`border-b border-vault-olive/20 hover:bg-vault-olive/10 transition-colors ${isEditing ? 'bg-vault-olive/5' : ''}`}>
+        <tr className={`hover:bg-surface-2/30 transition-all duration-200 ${isEditing ? 'bg-accent-blue/5' : ''}`}>
             {/* ID */}
-            <td className="p-3 font-mono text-xs text-vault-dust" title={profile.id}>
+            <td className="p-3 sm:p-4 font-mono text-xs text-text-muted" title={profile.id}>
                 {profile.id.slice(0, 8)}...
             </td>
 
             {/* Email + Role */}
-            <td className="p-3">
-                <div className="text-vault-paper font-bold">{profile.email}</div>
-                <div className="text-xs text-vault-dust mt-1 flex items-center gap-2">
-                    <span className={`px-1 rounded ${profile.role === 'admin' ? 'bg-atom-green/20 text-atom-green' : 'bg-vault-charcoal text-vault-dust'}`}>
+            <td className="p-3 sm:p-4">
+                <div className="text-text-primary font-medium">{profile.email}</div>
+                <div className="text-xs text-text-muted mt-1 flex items-center gap-2">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${profile.role === 'admin' ? 'bg-accent-red/10 text-accent-red border border-accent-red/20' : 'bg-surface-2 text-text-muted border border-transparent'}`}>
                         {profile.role || 'user'}
                     </span>
-                    {message && <span className="text-atom-amber animate-pulse">[{message}]</span>}
+                    {message && <span className="text-state-success animate-pulse text-[10px]">{message}</span>}
                 </div>
             </td>
 
-            {/* Usage Stats (New) */}
-            <td className="p-3 text-xs font-mono">
-                <div className="flex flex-col gap-1">
-                    <div className="flex justify-between w-32">
-                        <span className="text-vault-dust">WORDS:</span>
-                        <span className="text-atom-teal">{usageStats.totalWords.toLocaleString()}</span>
+            {/* Usage Stats */}
+            <td className="p-3 sm:p-4 text-xs">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <span className="text-text-muted">Words:</span>
+                        <span className="text-accent-blue font-medium">{usageStats.totalWords.toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between w-32">
-                        <span className="text-vault-dust">LAST:</span>
-                        <span className={usageStats.lastActive ? 'text-vault-paper' : 'text-vault-rust'}>
+                    <div className="flex items-center gap-2">
+                        <span className="text-text-muted">Last:</span>
+                        <span className={usageStats.lastActive ? 'text-text-secondary' : 'text-state-error'}>
                             {formatDate(usageStats.lastActive)}
                         </span>
                     </div>
@@ -96,48 +104,48 @@ export function UserRow({ profile, usageStats = { totalWords: 0, lastActive: nul
             </td>
 
             {/* Credits (Editable) */}
-            <td className="p-3">
+            <td className="p-3 sm:p-4">
                 {isEditing ? (
                     <input
                         type="number"
                         value={formData.credits_balance}
                         onChange={(e) => setFormData({ ...formData, credits_balance: Number(e.target.value) })}
-                        className="bg-vault-navy border border-atom-green text-atom-green w-24 px-2 py-1 text-right font-mono focus:outline-none focus:ring-1 focus:ring-atom-green"
+                        className="bg-surface-2 border border-accent-blue text-accent-blue w-24 px-2 py-1 rounded text-right font-medium text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue/40"
                     />
                 ) : (
-                    <span className={`font-bold font-mono ${formData.credits_balance > 0 ? 'text-atom-green' : 'text-vault-rust'}`}>
+                    <span className={`font-bold ${formData.credits_balance > 0 ? 'text-state-success' : 'text-text-muted'}`}>
                         ${formData.credits_balance.toFixed(2)}
                     </span>
                 )}
             </td>
 
             {/* Plan (Editable) */}
-            <td className="p-3">
+            <td className="p-3 sm:p-4">
                 {isEditing ? (
                     <select
                         value={formData.subscription_tier}
                         onChange={(e) => setFormData({ ...formData, subscription_tier: e.target.value })}
-                        className="bg-vault-navy border border-vault-olive text-vault-paper text-xs px-1 py-1 uppercase focus:outline-none"
+                        className="bg-surface-2 border border-surface-3 text-text-primary text-xs px-2 py-1 rounded uppercase focus:outline-none focus:ring-2 focus:ring-accent-blue/40"
                     >
                         <option value="free">Free</option>
+                        <option value="trial">Trial</option>
                         <option value="pro">Pro</option>
                         <option value="enterprise">Enterprise</option>
-                        <option value="trial">Trial</option>
                     </select>
                 ) : (
-                    <span className="uppercase text-xs tracking-wider px-2 py-1 bg-vault-charcoal rounded border border-vault-olive/30">
+                    <span className={`uppercase text-xs font-medium px-2 py-1 rounded border ${tierColors[formData.subscription_tier] || tierColors.free}`}>
                         {formData.subscription_tier}
                     </span>
                 )}
             </td>
 
             {/* Status (Editable) */}
-            <td className="p-3">
+            <td className="p-3 sm:p-4">
                 {isEditing ? (
                     <select
                         value={formData.subscription_status}
                         onChange={(e) => setFormData({ ...formData, subscription_status: e.target.value })}
-                        className="bg-vault-navy border border-vault-olive text-vault-paper text-xs px-1 py-1 uppercase focus:outline-none"
+                        className="bg-surface-2 border border-surface-3 text-text-primary text-xs px-2 py-1 rounded uppercase focus:outline-none focus:ring-2 focus:ring-accent-blue/40"
                     >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
@@ -145,46 +153,46 @@ export function UserRow({ profile, usageStats = { totalWords: 0, lastActive: nul
                     </select>
                 ) : (
                     <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${formData.subscription_status === 'active' ? 'bg-atom-green shadow-[0_0_8px_rgba(57,255,20,0.5)]' : 'bg-vault-rust'}`}></span>
-                        <span className="uppercase text-xs">{formData.subscription_status}</span>
+                        <span className={`w-2 h-2 rounded-full ${formData.subscription_status === 'active' ? 'bg-state-success shadow-[0_0_8px_rgba(52,211,153,0.8)]' : formData.subscription_status === 'banned' ? 'bg-state-error' : 'bg-text-muted'}`}></span>
+                        <span className="uppercase text-xs text-text-secondary">{formData.subscription_status}</span>
                     </div>
                 )}
             </td>
 
             {/* Actions */}
-            <td className="p-3">
+            <td className="p-3 sm:p-4">
                 <div className="flex flex-col gap-2 items-end">
                     {isEditing ? (
                         <>
                             <button
                                 onClick={handleSave}
                                 disabled={isLoading}
-                                className="bg-atom-green text-vault-navy px-3 py-1 text-xs font-bold hover:bg-white transition-colors w-full"
+                                className="bg-accent-blue text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-accent-blue/90 transition-all duration-200 disabled:opacity-50 w-full shadow-lg shadow-accent-blue/20"
                             >
-                                {isLoading ? 'SAVING...' : 'SAVE'}
+                                {isLoading ? 'Saving...' : 'Save'}
                             </button>
                             <button
                                 onClick={() => setIsEditing(false)}
                                 disabled={isLoading}
-                                className="text-vault-dust hover:text-vault-rust text-xs uppercase"
+                                className="text-text-muted hover:text-state-error text-xs uppercase tracking-wider transition-colors"
                             >
-                                CANCEL
+                                Cancel
                             </button>
                         </>
                     ) : (
                         <>
                             <button
                                 onClick={() => setIsEditing(true)}
-                                className="border border-vault-olive text-vault-olive hover:border-atom-amber hover:text-atom-amber px-3 py-1 text-xs transition-colors w-full text-center"
+                                className="border border-surface-3 text-text-secondary hover:border-accent-blue hover:text-accent-blue px-4 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 w-full"
                             >
-                                EDIT
+                                Edit
                             </button>
                             <button
                                 onClick={handlePasswordReset}
                                 disabled={isLoading}
-                                className="text-[10px] text-vault-dust hover:text-vault-rust uppercase tracking-wider"
+                                className="text-[10px] text-text-muted hover:text-accent-cyan uppercase tracking-wider transition-colors"
                             >
-                                RESET PW
+                                Reset Password
                             </button>
                         </>
                     )}
