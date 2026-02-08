@@ -341,6 +341,194 @@ const HowItWorks = () => (
   </section>
 );
 
+const Pricing = () => {
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
+  const router = useRouter();
+
+  const handleSubscribe = (tier: 'free' | 'pro') => {
+    if (tier === 'free') {
+      router.push('/signup');
+    } else {
+      // TODO: Integrate with Stripe checkout
+      router.push('/signup?plan=pro&billing=' + billingPeriod);
+    }
+  };
+
+  const monthlyPrice = 9.99;
+  const annualPrice = 7.99; // 20% off
+
+  return (
+    <section id="pricing" className="py-24 sm:py-32 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-bg-primary via-bg-secondary to-bg-primary opacity-50" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-accent-blue/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <span className="inline-block px-3 py-1 rounded-full bg-accent-gold/10 text-accent-gold font-mono text-xs font-bold mb-4 border border-accent-gold/20">Pricing</span>
+          <h2 className="font-display font-bold text-4xl sm:text-5xl mb-4 text-text-primary">Simple, Transparent Pricing.</h2>
+          <p className="text-text-secondary text-lg max-w-2xl mx-auto mb-8">Start free. Upgrade when you're ready.</p>
+
+          {/* Billing Toggle */}
+          <div className="inline-flex items-center gap-3 bg-surface-1/50 backdrop-blur-sm border border-surface-2 rounded-full p-1.5">
+            <button
+              onClick={() => setBillingPeriod('monthly')}
+              className={`px-6 py-2 rounded-full font-medium text-sm transition-all duration-200 ${billingPeriod === 'monthly' ? 'bg-accent-blue text-white shadow-lg shadow-accent-blue/25' : 'text-text-secondary hover:text-text-primary'}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod('annual')}
+              className={`px-6 py-2 rounded-full font-medium text-sm transition-all duration-200 flex items-center gap-2 ${billingPeriod === 'annual' ? 'bg-accent-blue text-white shadow-lg shadow-accent-blue/25' : 'text-text-secondary hover:text-text-primary'}`}
+            >
+              Annual
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent-gold/20 text-accent-gold font-bold">-20%</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
+          {/* FREE Tier */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ y: -5 }}
+            className="group relative bg-surface-1/50 backdrop-blur-sm border border-surface-2 rounded-2xl p-8 hover:border-white/20 hover:shadow-2xl transition-all duration-300 overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+            <div className="relative z-10">
+              <div className="mb-6">
+                <h3 className="font-display font-bold text-2xl text-text-primary mb-2">Free</h3>
+                <p className="text-text-muted text-sm">Perfect for trying out Neato Voice</p>
+              </div>
+
+              <div className="mb-8">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-display font-bold text-5xl text-text-primary">$0</span>
+                  <span className="text-text-muted text-sm">/month</span>
+                </div>
+                <p className="text-xs text-text-muted mt-2">Up to 1,000 words per month</p>
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                {[
+                  '1,000 words/month',
+                  'Real-time transcription',
+                  'AI-powered refinement',
+                  'Desktop overlay',
+                  'Cloud sync',
+                  'Basic support'
+                ].map((feature, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-text-secondary">
+                    <CheckCircle2 className="w-5 h-5 text-accent-blue shrink-0 mt-0.5" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => handleSubscribe('free')}
+                className="w-full py-3 rounded-lg bg-surface-2 hover:bg-surface-3 border border-surface-3 hover:border-white/20 text-text-primary font-bold transition-all duration-200 flex items-center justify-center gap-2 group/btn"
+              >
+                Get Started Free
+                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </motion.div>
+
+          {/* PRO Tier */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            whileHover={{ y: -5 }}
+            className="group relative bg-gradient-to-br from-accent-blue/10 to-accent-cyan/5 backdrop-blur-sm border-2 border-accent-blue/30 rounded-2xl p-8 hover:border-accent-blue/50 hover:shadow-[0_20px_60px_-15px_rgba(72,149,239,0.3)] transition-all duration-300 overflow-hidden"
+          >
+            {/* Popular Badge */}
+            <div className="absolute top-0 right-0 bg-gradient-to-r from-accent-blue to-accent-cyan text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg rounded-tr-2xl shadow-lg">
+              Most Popular
+            </div>
+
+            <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+            <div className="relative z-10">
+              <div className="mb-6 mt-4">
+                <h3 className="font-display font-bold text-2xl text-text-primary mb-2">Pro</h3>
+                <p className="text-text-muted text-sm">For power users who dictate daily</p>
+              </div>
+
+              <div className="mb-8">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-display font-bold text-5xl bg-gradient-to-r from-accent-blue to-accent-cyan bg-clip-text text-transparent">
+                    ${billingPeriod === 'monthly' ? monthlyPrice.toFixed(2) : annualPrice.toFixed(2)}
+                  </span>
+                  <span className="text-text-muted text-sm">/month</span>
+                </div>
+                {billingPeriod === 'annual' && (
+                  <p className="text-xs text-accent-gold mt-2 flex items-center gap-1.5">
+                    <Star className="w-3 h-3 fill-accent-gold" />
+                    Save $24/year with annual billing
+                  </p>
+                )}
+                {billingPeriod === 'monthly' && (
+                  <p className="text-xs text-text-muted mt-2">Unlimited words per month</p>
+                )}
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                {[
+                  'Unlimited words',
+                  'Real-time transcription',
+                  'AI-powered refinement',
+                  'Desktop overlay',
+                  'Cloud sync',
+                  'Priority support',
+                  'Custom vocabulary',
+                  'Advanced analytics'
+                ].map((feature, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-text-primary">
+                    <CheckCircle2 className="w-5 h-5 text-accent-cyan shrink-0 mt-0.5" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => handleSubscribe('pro')}
+                className="w-full py-3 rounded-lg bg-gradient-to-r from-accent-blue to-accent-cyan hover:shadow-[0_10px_30px_-5px_rgba(72,149,239,0.4)] text-white font-bold transition-all duration-200 flex items-center justify-center gap-2 group/btn shadow-lg shadow-accent-blue/25 hover:-translate-y-0.5"
+              >
+                Start Pro Trial
+                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+              <p className="text-center text-xs text-text-muted mt-3">No credit card required for trial</p>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Trust Signal */}
+        <div className="text-center mt-12">
+          <p className="text-text-muted text-sm flex items-center justify-center gap-2 flex-wrap">
+            <CheckCircle2 className="w-4 h-4 text-state-success" />
+            <span>Cancel anytime</span>
+            <span className="mx-2 text-surface-3">•</span>
+            <CheckCircle2 className="w-4 h-4 text-state-success" />
+            <span>30-day money-back guarantee</span>
+            <span className="mx-2 text-surface-3">•</span>
+            <CheckCircle2 className="w-4 h-4 text-state-success" />
+            <span>Secure payment via Stripe</span>
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Testimonials = () => (
   <section id="testimonials" className="py-24">
     <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
@@ -467,6 +655,7 @@ export default function LandingPage() {
       <Hero />
       <Features />
       <HowItWorks />
+      <Pricing />
       <Testimonials />
       <CTA />
       <Footer />
