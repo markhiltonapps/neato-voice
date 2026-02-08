@@ -34,7 +34,7 @@ const Navbar = () => {
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-9 h-9 overflow-hidden rounded-full border border-white/10 shadow-lg group-hover:scale-105 transition-transform">
             {/* Mascot Logo - Using Image with fallback or placeholder if file missing */}
-            <img src="/neato-logo.jpeg" alt="Neato" className="object-cover w-full h-full" />
+            <img src="/neato-logo.svg" alt="Neato" className="object-cover w-full h-full" />
           </div>
           <span className="font-display font-bold text-lg text-text-primary tracking-tight">Neato Ventures</span>
         </Link>
@@ -113,7 +113,7 @@ const Hero = () => {
           transition={{ duration: 0.8, ease: "backOut" }}
           className="mx-auto w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-white/10 shadow-[0_0_40px_rgba(72,149,239,0.3)] mb-8 overflow-hidden bg-surface-1"
         >
-          <img src="/neato-logo.jpeg" alt="Neato Mascot" className="w-full h-full object-cover" />
+          <img src="/neato-logo.svg" alt="Neato Mascot" className="w-full h-full object-cover" />
         </motion.div>
 
         <motion.div
@@ -379,7 +379,7 @@ const CTA = () => (
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         className="w-20 h-20 rounded-full border-2 border-white/20 mx-auto mb-8 overflow-hidden shadow-[0_0_30px_rgba(240,180,41,0.2)]"
       >
-        <img src="/neato-logo.jpeg" alt="Mascot" className="w-full h-full object-cover" />
+        <img src="/neato-logo.svg" alt="Mascot" className="w-full h-full object-cover" />
       </motion.div>
 
       <h2 className="font-display font-bold text-4xl sm:text-5xl mb-6">
@@ -414,7 +414,7 @@ const Footer = () => (
         <div className="col-span-2">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10">
-              <img src="/neato-logo.jpeg" alt="Neato" className="w-full h-full object-cover" />
+              <img src="/neato-logo.svg" alt="Neato" className="w-full h-full object-cover" />
             </div>
             <span className="font-display font-bold text-xl">Neato Ventures</span>
           </div>
@@ -460,7 +460,7 @@ const Footer = () => (
         <p className="text-xs text-text-muted font-mono">© 2026 Neato Ventures Inc. All rights reserved.</p>
         <div className="group flex items-center gap-2 text-xs text-text-muted hover:text-text-primary transition-colors cursor-default">
           Made with AI & a little retro magic
-          <img src="/neato-logo.jpeg" className="w-4 h-4 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:rotate-12" />
+          <img src="/neato-logo.svg" className="w-4 h-4 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:rotate-12" />
         </div>
       </div>
     </div>
