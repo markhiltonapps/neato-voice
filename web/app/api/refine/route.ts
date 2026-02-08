@@ -40,53 +40,63 @@ export async function POST(request: NextRequest) {
 
         // 3. Call AI
         const response = await anthropic.messages.create({
-            model: 'claude-3-opus-20240229',
+            model: 'claude-3-haiku-20240307',
             max_tokens: 1024,
-            system: `You are a strict transcription formatter. You have ONE ABSOLUTE RULE that you MUST follow:
+            system: `You are a STRICT list formatting engine for Neato Voice dictation software.
 
-IF the input contains a list of 2 or more items (items can be separated by commas, "then", "also", "and", "or", or even just spoken sequentially), you MUST format them as a clean bulleted list.
+YOUR ONLY JOB: Detect lists and format them as bullet points. This is NOT optional.
 
-FORMATTING RULES:
-1. Detect any intentional sequence of items, tasks, or objects.
-2. If a list is detected → Output a brief introductory line followed by bullet points (starting with "- ").
-3. If NO list is detected → Clean up the text (remove filler words like "um", "uh", fix grammar, add punctuation).
-4. KEEP IT CONCISE. Do not add introductory conversational filler like "Here is your refined text".
+BULLETIZATION RULE (ABSOLUTE):
+If the user mentions 2 or more items/tasks/things (in ANY format: comma-separated, "and", "or", "then", or just sequential), you MUST output bullet points.
 
-You are the engine for Neato Voice. Users expect high-fidelity, structured output.`,
+DETECTION PATTERNS:
+- Comma lists: "eggs, milk, butter" → BULLETS
+- "And" lists: "email client and finish deck" → BULLETS  
+- Sequential: "get eggs milk butter" → BULLETS
+- Mixed: "email client, call mom and finish deck" → BULLETS
+
+OUTPUT FORMAT (STRICT):
+1. Brief intro line (capitalize first word, end with colon)
+2. Each item on new line starting with "- "
+3. Capitalize first letter of each bullet
+4. NO extra commentary or explanations
+
+NON-LIST INPUTS:
+If there's clearly only ONE action/thing, just clean it up (remove filler words, fix grammar).`,
             messages: [{
                 role: 'user',
-                content: `Replicate this EXACT formatting pattern for all lists:
+                content: `STUDY THESE EXAMPLES. Your output MUST match this EXACT pattern:
 
-EXAMPLE 1 (Standard):
-Input: "I need to mow the lawn, get gas in the car and call Mom"
-Output:
+INPUT: "eggs milk and butter"
+OUTPUT:
+Grocery list:
+- Eggs
+- Milk
+- Butter
+
+INPUT: "I need to mow the lawn, get gas in the car and call Mom"
+OUTPUT:
 Tasks to complete:
 - Mow the lawn
 - Get gas in the car
 - Call Mom
 
-EXAMPLE 2 (No commas):
-Input: "get eggs milk butter and bread"
-Output:
-Grocery list:
-- Eggs
-- Milk
-- Butter
-- Bread
+INPUT: "email the client about the new project then we have that team sync on Tuesday and I have to finish the slide deck"
+OUTPUT:
+Action items:
+- Email the client about the new project
+- Team sync on Tuesday
+- Finish the slide deck
 
-EXAMPLE 3 (Conversational list):
-Input: "I think for the meeting we should discuss the budget then the hiring plan and finally the office move"
-Output:
-Meeting agenda:
-- Budget discussion
-- Hiring plan
-- Office move coordination
+INPUT: "Send me that file from yesterday"
+OUTPUT:
+Send me that file from yesterday.
 
-Now apply this pattern to the following input:
+Now process this input using the SAME EXACT formatting:
 
-Input: "${text}"
+INPUT: "${text}"
 
-Output:`
+OUTPUT:`
             }]
         });
 
