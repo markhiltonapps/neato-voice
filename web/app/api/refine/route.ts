@@ -44,24 +44,39 @@ export async function POST(request: NextRequest) {
             max_tokens: 1024,
             messages: [{
                 role: 'user',
-                content: `You are an expert editor and restructuring agent. Your goal is to not just "fix" text, but to format it intelligently based on intent.
+                content: `You are a transcription formatter. Your ONLY job is to:
+1. Remove filler words (um, uh, ah, like, you know)
+2. Fix grammar and punctuation
+3. **FORMAT LISTS AS BULLETS** - This is CRITICAL
+
+WHEN TO CREATE BULLET LISTS:
+- If you see 2+ items separated by commas or "and", YOU MUST format as bullets
+- Each bullet starts with "- " (dash + space) on its own line
+
+EXAMPLES (study these carefully):
+
+INPUT: "I need to mow the lawn, get gas in the car and call Mom"
+OUTPUT:
+I need to:
+- Mow the lawn
+- Get gas in the car
+- Call Mom
+
+INPUT: "Buy apples, bananas and cheese"
+OUTPUT:
+Buy:
+- Apples
+- Bananas
+- Cheese
+
+INPUT: "hey um send me that file from yesterday"
+OUTPUT:
+Hey, send me that file from yesterday.
+
+DO NOT output plain text with commas when there are multiple items. ALWAYS use bullets for lists.
 
 Input Text:
-"${text}"
-
-Instructions:
-1. **Analyze Intent:** Look for multiple actions, items, or steps.
-2. **Apply Structure:**
-   - **CRITICAL:** If there are 3+ items or actions, YOU MUST format them as a bulleted list.
-   - Example Input: "I need to X, Y, and Z"
-   - Example Output:
-     * X
-     * Y
-     * Z
-   - If it is a letter/note, use proper newlines and headers.
-3. **Refine:** Remove filler words, fix grammar, but prioritized STRUCTURE over flow.
-
-Output ONLY the final refined text. Do not add conversational filler like "Here is the text:".`
+"${text}"`
             }],
         });
 
