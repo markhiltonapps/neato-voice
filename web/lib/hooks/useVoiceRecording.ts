@@ -21,8 +21,6 @@ export function useVoiceRecording() {
     const [isInitialized, setIsInitialized] = useState(false);
     const [initializationProgress, setInitializationProgress] = useState(0);
 
-
-
     useEffect(() => {
         let mounted = true;
 
@@ -41,7 +39,6 @@ export function useVoiceRecording() {
                 if (!mounted) return;
 
                 providerRef.current.onTranscript((event) => {
-                    // console.log(`[Hook] Transcript received: "${event.text}" (final: ${event.isFinal})`); 
                     if (event.isFinal) {
                         console.log(`[Hook] Final transcript received (length: ${event.text.length})`);
                         appendRawTranscript(event.text);
@@ -120,122 +117,67 @@ export function useVoiceRecording() {
         if (!providerRef.current || !isInitialized) return;
 
         await providerRef.current.stopListening();
-
-        // Start processing
-        // Start processing
         setRecordingState('processing');
 
-        // Notify backend for overlay (Stop showing "Listening", maybe show processing state later?)
         const api = getElectronAPI();
         if (api && api.setRecordingState) {
             api.setRecordingState('processing');
         }
 
         try {
-            // Get latest text directly from store state to avoid closure staleness
             const currentRaw = useVoiceStore.getState().rawTranscript;
             console.log('[Hook] Raw transcript length:', currentRaw.length);
 
             if (currentRaw && currentRaw.trim()) {
                 let textToInject = currentRaw;
+                let refinedText = currentRaw;
 
-                // Check if we're in Electron by checking for the API
-                const api = getElectronAPI();
-                console.log('[Hook] Protocol:', window.location.protocol, 'Has electronAPI:', !!api);
+                // 1. REFINE via Web API (Always)
+                // This ensures we use the latest prompt logic (bullets, etc.) deployed on the server.
+                try {
+                    console.log('[Hook] Calling Web Refinement API...');
+                    useVoiceStore.getState().setRefinementError(null);
 
-                // Force usage of Web API for refinement to ensure latest logic (with bullets) is used
-                // regardless of the installed Electron version.
-                const FORCE_WEB_REFINEMENT = true;
+                    refinedText = await refineTranscription(currentRaw);
+                    console.log('[Hook] Refinement SUCCESS. Result len: ' + refinedText.length);
 
-                if (!api || FORCE_WEB_REFINEMENT) {
-                    // Use Web API for refinement
-                    try {
-                        console.log('[Hook] Refining transcript via Web API (forced)...');
-                        useVoiceStore.getState().setRefinementError(null); // Clear previous error
-                        const refined = await refineTranscription(currentRaw);
-                        console.log('[Hook] Refined transcript length:', refined.length);
-                        useVoiceStore.getState().setRefinedText(refined);
-                        textToInject = refined;
-                    } catch (refineError: any) {
-                        console.error('[Hook] Refinement failed, using raw transcript:', refineError);
-                        useVoiceStore.getState().setRefinementError(refineError.message || 'Refinement Failed');
-                        useVoiceStore.getState().setRefinedText(currentRaw);
-                    }
-                } else {
-                    console.log('[Hook] Electron environment detected, refining via IPC...');
-                    try {
-                        // Fetch settings first to check for translation
-                        const settings = await api.getSettings();
-
-                        // Check for forced translation mode from hotkey
-                        const forcedMode = window.sessionStorage.getItem('temp_translation_mode') === 'true';
-
-                        let refineOptions = { translation: settings?.translation };
-                        if (forcedMode) {
-                            console.log('[Hook] Forced Translation Mode Active');
-                            refineOptions = {
-                                translation: {
-                                    enabled: true,
-                                    targetLanguage: settings?.translation?.targetLanguage || 'Spanish'
-                                }
-                            };
-                            // Cleanup
-                            window.sessionStorage.removeItem('temp_translation_mode');
-                        }
-
-                        // Use the new defineText method exposed in preload with translation options
-                        const refined = await api.refineText(currentRaw, refineOptions);
-                        console.log('[Hook] IPC Refined transcript length:', refined.length);
-                        useVoiceStore.getState().setRefinedText(refined);
-                        textToInject = refined;
-                    } catch (ipcError) {
-                        console.error('[Hook] IPC Refinement failed:', ipcError);
-                        // Fallback to raw text
-                        useVoiceStore.getState().setRefinedText(currentRaw);
-                    }
+                    useVoiceStore.getState().setRefinedText(refinedText);
+                    textToInject = refinedText;
+                } catch (err: any) {
+                    console.error('[Hook] Refinement Failed:', err);
+                    useVoiceStore.getState().setRefinementError(err.message || 'Processing Error');
+                    // Fallback to raw is already set
                 }
 
+                // 2. INJECT via Electron IPC
                 if (api) {
-                    console.log('[Hook] Injecting text via Electron API (length: ' + textToInject.length + ')');
+                    console.log('[Hook] Injecting text via Electron API...');
                     api.injectText(textToInject);
 
                     // Update Stats
                     const wordCount = textToInject.trim().split(/\s+/).length;
-                    // Approximate duration if we didn't track it precisely start-to-end
-                    // (Here we could use a startTime ref, but for now let's estimate or just count words)
-                    // Let's add start time tracking to the hook
                     const durationMs = Date.now() - (startTimeRef.current || Date.now());
 
                     api.updateStats({ durationMs, wordCount }).catch(err => console.error('Failed to update stats:', err));
-
-                    // Save to History
                     api.addHistoryEntry(textToInject).catch(err => console.error('Failed to save history:', err));
-                } else {
-                    console.warn('[Hook] No Electron API available for text injection');
                 }
             } else {
                 console.warn('[Hook] No transcript to refine');
             }
+
             setRecordingState('idle');
 
-            // Finally hide the overlay after a short delay so user sees the result
+            // Hide overlay delay
             if (api && api.setRecordingState) {
-                // Wait 2 seconds before hiding overlay so user can see "Refined" or Error
-                setTimeout(() => {
-                    api.setRecordingState('idle'); // This triggers hide
-                }, 2500);
-            }
-        } catch (e: any) {
-            console.error("[Hook] Processing error:", e);
-            setError(e.message || 'Processing failed');
-            setRecordingState('error');
-            const api = getElectronAPI();
-            if (api && api.setRecordingState) {
-                // Keep visible on error for longer
                 setTimeout(() => {
                     api.setRecordingState('idle');
-                }, 4000);
+                }, 2500);
             }
+
+        } catch (e: any) {
+            console.error("[Hook] Critical error in stopRecording:", e);
+            setError(e.message || 'Processing failed');
+            setRecordingState('error');
         }
     }, [isInitialized, setRecordingState, setError]);
 
