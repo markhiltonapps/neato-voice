@@ -664,54 +664,72 @@ ipcMain.handle('refine-text', async (event, text, options = {}) => {
 
         const anthropic = new Anthropic({ apiKey });
 
-        let prompt = `You are a transcription formatter. Your ONLY job is to:
-1. Remove filler words (um, uh, ah, like, you know)
-2. Fix grammar and punctuation
-3. **FORMAT LISTS AS BULLETS** - This is CRITICAL
+        let systemPrompt = `You are a strict transcription formatter. You have ONE ABSOLUTE RULE that you MUST follow:
 
-WHEN TO CREATE BULLET LISTS:
-- If you see 2+ items separated by commas or "and", YOU MUST format as bullets
-- Each bullet starts with "- " (dash + space) on its own line
+IF the input contains a list of 2 or more items (separated by commas, "and", or "or"), you MUST format them as bullet points. This is non-negotiable.
 
-EXAMPLES (study these carefully):
+FORMATTING RULES:
+1. Detect if there are 2+ items in a series
+2. If yes → Extract each item and format as bullets (one per line, starting with "- ")
+3. If no → Just clean up the text (remove filler words, fix grammar)
 
-INPUT: "I need to mow the lawn, get gas in the car and call Mom"
-OUTPUT:
+You will be given examples. Study them and replicate the EXACT formatting pattern.`;
+
+        let userPrompt = `Here are examples of CORRECT formatting. You MUST follow this exact pattern:
+
+EXAMPLE 1:
+Input: "I need to mow the lawn, get gas in the car and call Mom"
+Correct output:
 I need to:
 - Mow the lawn
-- Get gas in the car  
+- Get gas in the car
 - Call Mom
 
-INPUT: "Buy apples, bananas and cheese"
-OUTPUT:
+EXAMPLE 2:
+Input: "Tomorrow I need to get gas in my car, call my mom, and mow the yard"
+Correct output:
+Tomorrow I need to:
+- Get gas in my car
+- Call my mom
+- Mow the yard
+
+EXAMPLE 3:
+Input: "Buy apples, bananas and cheese"
+Correct output:
 Buy:
 - Apples
 - Bananas
 - Cheese
 
-INPUT: "hey um send me that file from yesterday"
-OUTPUT:
-Hey, send me that file from yesterday.
+EXAMPLE 4 (no list):
+Input: "Send me that file from yesterday"
+Correct output:
+Send me that file from yesterday.
 
-DO NOT output plain text with commas when there are multiple items. ALWAYS use bullets for lists.`;
+Now apply the SAME formatting pattern to this input. If it has 2+ items in a list, you MUST use bullets:
+
+Input: "${text}"
+
+Output:`;
 
         if (isTranslation) {
             log(`[Refinement] Translating to ${translation.targetLanguage}`);
-            prompt = `Translate the following transcribed text to ${translation.targetLanguage}.
+            systemPrompt = `Translate the following transcribed text to ${translation.targetLanguage}.
 Rules:
 1. Preserve the original meaning and tone.
 2. Fix any obvious transcription errors before translating.
 3. Output ONLY the translated text, no preamble or explanations.`;
+            userPrompt = `Translate this: "${text}"`;
         }
 
         log('[Refinement] Calling Claude API...');
         const response = await anthropic.messages.create({
             model: "claude-3-5-sonnet-20241022",
             max_tokens: 2048,
-            system: prompt,  // Use system message for better instruction-following
+            system: systemPrompt,
             messages: [{
                 role: "user",
-                content: `Refine this: "${text}"`
+                content: userPrompt
             }]
         });
 

@@ -132,14 +132,23 @@ export function useVoiceRecording() {
                 let textToInject = currentRaw;
                 let refinedText = currentRaw;
 
-                // 1. REFINE via Web API (Always)
-                // This ensures we use the latest prompt logic (bullets, etc.) deployed on the server.
+                // 1. REFINE via Electron IPC (if available) or Web API (fallback)
+                // Prefer IPC because it's faster and doesn't require network calls
                 try {
-                    console.log('[Hook] Calling Web Refinement API...');
+                    console.log('[Hook] Attempting refinement...');
                     useVoiceStore.getState().setRefinementError(null);
 
-                    refinedText = await refineTranscription(currentRaw);
-                    console.log('[Hook] Refinement SUCCESS. Result len: ' + refinedText.length);
+                    if (api && api.refineText) {
+                        // Use Electron IPC refinement (desktop app)
+                        console.log('[Hook] Using Electron IPC refinement...');
+                        refinedText = await api.refineText(currentRaw);
+                        console.log('[Hook] IPC Refinement SUCCESS. Result len: ' + refinedText.length);
+                    } else {
+                        // Fallback to Web API (browser or if IPC unavailable)
+                        console.log('[Hook] Using Web API refinement...');
+                        refinedText = await refineTranscription(currentRaw);
+                        console.log('[Hook] Web Refinement SUCCESS. Result len: ' + refinedText.length);
+                    }
 
                     useVoiceStore.getState().setRefinedText(refinedText);
                     textToInject = refinedText;
