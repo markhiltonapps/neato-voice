@@ -34,7 +34,7 @@ interface ElectronAPI {
     getVersion: () => Promise<string>;
 
     // Overlay State
-    setRecordingState?: (isRecording: boolean) => void;
+    setRecordingState?: (state: boolean | string) => void;
 }
 
 // Check if running in Electron

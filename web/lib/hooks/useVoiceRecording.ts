@@ -112,7 +112,7 @@ export function useVoiceRecording() {
 
         // Notify backend for overlay
         if (api && api.setRecordingState) {
-            api.setRecordingState(true);
+            api.setRecordingState('recording');
         }
     }, [isInitialized, setRecordingState]);
 
@@ -128,7 +128,7 @@ export function useVoiceRecording() {
         // Notify backend for overlay (Stop showing "Listening", maybe show processing state later?)
         const api = getElectronAPI();
         if (api && api.setRecordingState) {
-            api.setRecordingState(false);
+            api.setRecordingState('processing');
         }
 
         try {
@@ -213,13 +213,24 @@ export function useVoiceRecording() {
                 console.warn('[Hook] No transcript to refine');
             }
             setRecordingState('idle');
+
+            // Finally hide the overlay after a short delay so user sees the result
+            if (api && api.setRecordingState) {
+                // Wait 2 seconds before hiding overlay so user can see "Refined" or Error
+                setTimeout(() => {
+                    api.setRecordingState('idle'); // This triggers hide
+                }, 2500);
+            }
         } catch (e: any) {
             console.error("[Hook] Processing error:", e);
             setError(e.message || 'Processing failed');
             setRecordingState('error');
             const api = getElectronAPI();
             if (api && api.setRecordingState) {
-                api.setRecordingState(false);
+                // Keep visible on error for longer
+                setTimeout(() => {
+                    api.setRecordingState('idle');
+                }, 4000);
             }
         }
     }, [isInitialized, setRecordingState, setError]);

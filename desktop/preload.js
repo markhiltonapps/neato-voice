@@ -38,7 +38,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
 
     // Refine text using AI in the main process
-    refineText: (text) => ipcRenderer.invoke('refine-text', text),
+    refineText: (text, options) => ipcRenderer.invoke('refine-text', text, options),
 
     // Stats
     getStats: () => ipcRenderer.invoke('get-stats'),

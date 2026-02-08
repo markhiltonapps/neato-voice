@@ -384,21 +384,27 @@ app.on('will-quit', () => {
 });
 
 // Handle Recording State for Overlay
-ipcMain.on('recording-state-change', (event, isRecording) => {
+// Handle Recording State for Overlay
+ipcMain.on('recording-state-change', (event, state) => {
+    // state can be 'recording', 'processing', 'idle' (or boolean true/false for legacy)
+    const isRecording = state === true || state === 'recording';
+    const isProcessing = state === 'processing';
+
     if (overlayWindow && !overlayWindow.isDestroyed()) {
-        if (isRecording) {
+        if (isRecording || isProcessing) {
             overlayWindow.setOpacity(1.0);
             overlayWindow.showInactive(); // Show overlay
         } else {
+            // Only hide if completely idle/done
             overlayWindow.hide();
         }
     }
 
     // Manage Main Window visibility state
-    if (!isRecording && mainWindow && !mainWindow.isDestroyed()) {
-        // If we were recording invisibly, hide the main window again
-        // We check opacity to know if we were in "Invisible Mode" vs "Dashboard Mode"
-        // Actually, safer to just hide if it was transparent, or restore opacity if we want to keep it hidden
+    // Only hide main window if we are RECORDING (invisibly). 
+    // If processing, we might want to keep it hidden or show it? 
+    // For now, let's keep previous logic: if we stop recording (go to idle or processing), restore opacity if needed.
+    if (!isRecording && !isProcessing && mainWindow && !mainWindow.isDestroyed()) {
         if (mainWindow.getOpacity() < 1.0) {
             mainWindow.hide();
             mainWindow.setOpacity(1.0); // Reset for next valid open
@@ -604,9 +610,13 @@ ipcMain.handle('refine-text', async (event, text, options = {}) => {
 Rules:
 1. Remove filler words (um, uh, ah, like, you know).
 2. Fix grammar and punctuation.
-3. If the user corrects themselves (e.g., "pick me up at 2, wait 1"), use only the corrected version ("pick me up at 1").
-4. Format lists nicely (e.g., "apples bread and milk" -> bullet points if it looks like a list).
-5. Output ONLY the refined text, no preamble or explanations.`;
+3. If the user corrects themselves, use the corrected version.
+4. **CRITICAL:** If there are 3+ items or actions, YOU MUST format them as a bulleted list.
+   - Example: "I need to X, Y, and Z" -> 
+     * X
+     * Y
+     * Z
+5. Output ONLY the refined text, no preamble.`;
 
         if (isTranslation) {
             log(`[Refinement] Translating to ${translation.targetLanguage}`);
