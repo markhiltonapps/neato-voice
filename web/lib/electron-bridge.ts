@@ -12,14 +12,14 @@ interface ElectronAPI {
     removeEnhanceSelectedListener?: () => void;
 
     // Settings
-    getSettings: () => Promise<{ translation: { enabled: boolean; targetLanguage: string }; microphoneId: string }>;
+    getSettings: () => Promise<{ translation: { enabled: boolean; targetLanguage: string }; microphoneId: string; weeklyWordLimit: number }>;
     saveSettings: (settings: any) => Promise<boolean>;
 
     injectText: (text: string) => void;
     refineText: (text: string, options?: { translation?: { enabled: boolean; targetLanguage: string } }) => Promise<string>;
 
     // Enhancement methods
-    enhanceText?: ()  => Promise<{ success: boolean; text: string; error?: string }>;
+    enhanceText?: () => Promise<{ success: boolean; text: string; error?: string }>;
     getStats: () => Promise<{
         totalDictationTimeMs: number;
         totalWords: number;

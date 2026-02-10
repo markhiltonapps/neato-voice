@@ -183,7 +183,7 @@ export function SettingsView() {
                         Hold a key to speak instead of toggling on/off.
                     </p>
                     <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Current Hotkey: Ctrl+Shift+Space (Toggle)</span>
+                        <span className="text-sm text-gray-400">Current Hotkeys: Ctrl+R (Rec) | Ctrl+E (Enhance)</span>
                         <button disabled className="bg-gray-200 text-gray-400 px-3 py-1 rounded text-sm cursor-not-allowed">Configure</button>
                     </div>
                 </section>

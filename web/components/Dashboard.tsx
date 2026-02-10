@@ -35,7 +35,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
                     Speak naturally, <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-blue to-accent-cyan">write perfectly</span>.
                 </h1>
                 <p className="text-text-secondary text-lg max-w-2xl">
-                    Hold <kbd className="bg-surface-2 border border-surface-3 rounded px-2 py-0.5 text-sm font-mono text-accent-cyan shadow-sm">Ctrl+Shift+Space</kbd> to start dictating in any application.
+                    Press <kbd className="bg-surface-2 border border-surface-3 rounded px-2 py-0.5 text-sm font-mono text-accent-cyan shadow-sm">Ctrl+R</kbd> to start/stop dictating, or <kbd className="bg-surface-2 border border-surface-3 rounded px-2 py-0.5 text-sm font-mono text-accent-cyan shadow-sm">Ctrl+E</kbd> to enhance selected text.
                 </p>
             </div>
 
@@ -48,7 +48,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
                             Ready to Dictate?
                         </h2>
                         <p className="text-text-secondary text-lg max-w-xl">
-                            Neato Voice works best on your desktop. Download the app to unlock global dictation in <span className="text-white font-bold">any application</span> using <kbd className="bg-surface-3 px-2 py-0.5 rounded text-sm font-mono border border-white/10">Ctrl+Shift+Space</kbd>.
+                            Neato Voice works best on your desktop. Download the app to unlock global dictation in <span className="text-white font-bold">any application</span> using <kbd className="bg-surface-3 px-2 py-0.5 rounded text-sm font-mono border border-white/10">Ctrl+R</kbd>.
                         </p>
                     </div>
                     <div className="flex flex-col gap-3 w-full sm:w-auto">
