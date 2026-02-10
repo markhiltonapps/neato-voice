@@ -1,5 +1,5 @@
 import React from 'react';
-import { HelpCircle, Mic, Globe, Settings, AlertCircle, Zap, ShieldAlert, Keyboard, BarChart } from 'lucide-react';
+import { HelpCircle, Mic, Globe, Settings, AlertCircle, Zap, ShieldAlert, Keyboard, BarChart, Wand2, ArrowRight } from 'lucide-react';
 
 export function HelpView() {
     return (
