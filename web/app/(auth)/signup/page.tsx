@@ -237,7 +237,7 @@ export default function SignupPage() {
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
                                             placeholder="Full Name"
-                                            className="w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all"
+                                            className="w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all"
                                         />
                                     </div>
                                     <div className="relative">
@@ -250,7 +250,7 @@ export default function SignupPage() {
                                             placeholder="Email Address"
                                             readOnly={checkoutSuccess}
                                             disabled={checkoutSuccess}
-                                            className={`w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all ${checkoutSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                            className={`w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all ${checkoutSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
                                         />
                                     </div>
                                     <div className="relative">
@@ -261,7 +261,7 @@ export default function SignupPage() {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             placeholder="Password"
-                                            className="w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all"
+                                            className="w-full bg-surface-2/50 border border-surface-3 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-accent-blue/50 focus:border-accent-blue transition-all"
                                         />
                                     </div>
                                 </div>
