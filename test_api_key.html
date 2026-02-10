@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AssemblyAI API Key Test</title>
+</head>
+<body>
+    <h1>AssemblyAI API Key Tester</h1>
+    <p>This will test if your API key is valid.</p>
+    <button onclick="testApiKey()">Test API Key</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testApiKey() {
+            const apiKey = '72bba0a97f1f494a975b04dde808546f';
+            const resultEl = document.getElementById('result');
+            
+            resultEl.textContent = 'Testing API key...';
+            
+            try {
+                // Test 1: Get realtime token
+                const tokenResponse = await fetch('https://api.assemblyai.com/v2/realtime/token', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': apiKey
+                    }
+                });
+                
+                resultEl.textContent = `Token Response Status: ${tokenResponse.status}\n`;
+                const tokenData = await tokenResponse.text();
+                resultEl.textContent += `Token Response: ${tokenData}\n\n`;
+                
+                // Test 2: Try with standard API endpoint
+                const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': apiKey
+                    }
+                });
+                
+                resultEl.textContent += `Transcript API Status: ${transcriptResponse.status}\n`;
+                const transcriptData = await transcriptResponse.text();
+                resultEl.textContent += `Transcript Response: ${transcriptData}`;
+                
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

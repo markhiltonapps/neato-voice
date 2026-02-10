@@ -1,0 +1,66 @@
+{
+  "name": "neato-voice-desktop",
+  "version": "1.0.12",
+  "description": "Neato Voice - AI-Powered Voice Dictation",
+  "main": "main.js",
+  "author": "Neato Ventures",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "set NODE_ENV=development && electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:portable": "electron-builder --win portable",
+    "release": "node scripts/release.js"
+  },
+  "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "markhiltonapps",
+        "repo": "neato-voice"
+      }
+    ],
+    "appId": "com.neatoventures.voice",
+    "productName": "Neato Voice",
+    "directories": {
+      "output": "dist"
+    },
+    "asar": false,
+    "files": [
+      "main.js",
+      "preload.js",
+      ".env",
+      "assets/**/*",
+      "web-build/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Neato Voice"
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.72.1",
+    "auto-launch": "^5.0.6",
+    "dotenv": "^17.2.3",
+    "electron-store": "^8.1.0",
+    "electron-updater": "^6.7.3"
+  }
+}

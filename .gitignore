@@ -1,0 +1,16 @@
+node_modules/
+.next/
+dist/
+out/
+build/
+.env
+.env.local
+.DS_Store
+*.exe
+*.dmg
+*.zip
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.idea/
+.vscode/
