@@ -53,7 +53,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
                     </div>
                     <div className="flex flex-col gap-3 w-full sm:w-auto">
                         <a
-                            href="https://github.com/markhiltonapps/neato-voice/releases/download/v1.0.25/Neato%20Voice%20Setup%201.0.25.exe"
+                            href="https://github.com/markhiltonapps/neato-voice/releases/download/v1.0.25/Neato.Voice.Setup.1.0.25.exe"
                             className="bg-accent-red hover:bg-accent-red/90 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-accent-red/20 flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 hover:shadow-2xl"
                         >
                             <span className="text-xl">Download for Windows</span>
