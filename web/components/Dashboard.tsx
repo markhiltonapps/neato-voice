@@ -13,9 +13,10 @@ interface DashboardProps {
     refinedTranscript?: string;
     isRefining?: boolean;
     refinementError?: string | null;
+    isElectron?: boolean;
 }
 
-export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining, refinementError }: DashboardProps) {
+export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining, refinementError, isElectron = false }: DashboardProps) {
     const totalMinutes = Math.floor(stats.totalDictationTimeMs / 60000);
 
     // Calculate Personalization Score
@@ -37,6 +38,33 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
                     Hold <kbd className="bg-surface-2 border border-surface-3 rounded px-2 py-0.5 text-sm font-mono text-accent-cyan shadow-sm">Ctrl+Shift+Space</kbd> to start dictating in any application.
                 </p>
             </div>
+
+            {/* Download Banner (Web Only) */}
+            {!isRefining && !isElectron && <div className="mb-8 p-0.5 rounded-2xl bg-gradient-to-r from-accent-red via-accent-blue to-accent-cyan animate-aurora relative overflow-hidden shadow-2xl">
+                <div className="bg-bg-primary/95 backdrop-blur-xl rounded-[14px] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
+                    <div className="flex-1 text-center sm:text-left">
+                        <h2 className="text-2xl font-bold font-display text-white mb-2 flex items-center justify-center sm:justify-start gap-3">
+                            <span className="bg-accent-red/20 text-accent-red p-2 rounded-lg"><Zap size={24} /></span>
+                            Ready to Dictate?
+                        </h2>
+                        <p className="text-text-secondary text-lg max-w-xl">
+                            Neato Voice works best on your desktop. Download the app to unlock global dictation in <span className="text-white font-bold">any application</span> using <kbd className="bg-surface-3 px-2 py-0.5 rounded text-sm font-mono border border-white/10">Ctrl+Shift+Space</kbd>.
+                        </p>
+                    </div>
+                    <div className="flex flex-col gap-3 w-full sm:w-auto">
+                        <a
+                            href="https://github.com/markhiltonapps/neato-voice/releases/latest"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-accent-red hover:bg-accent-red/90 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-accent-red/20 flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 hover:shadow-2xl"
+                        >
+                            <span className="text-xl">Download for Windows</span>
+                            <ArrowRight size={20} />
+                        </a>
+                        <p className="text-xs text-center text-text-muted">v1.0.12 • Windows 10/11</p>
+                    </div>
+                </div>
+            </div>}
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

@@ -115,6 +115,7 @@ export default function AppDashboard() {
                                 refinedTranscript={refinedText}
                                 isRefining={recordingState === 'processing'}
                                 refinementError={null}
+                                isElectron={!!getElectronAPI()}
                             />
                         </div>
                     )}
