@@ -98,19 +98,28 @@ function createWindow() {
     // Load the web app
     if (process.env.NODE_ENV === 'development') {
         log('Loading dev server');
-        mainWindow.loadURL('http://localhost:3000');
+        mainWindow.loadURL('http://localhost:3000/dashboard');
         mainWindow.webContents.openDevTools();
     } else {
-        // Load the local production build via electron-serve
-        // electron-serve handles all Next.js routing, data files, and edge cases automatically
-        log('Loading local production build via electron-serve');
-        loadURL(mainWindow).then(() => {
-            log('electron-serve loaded successfully');
-        }).catch(e => log(`Failed to load app: ${e}`));
+        // Load the dashboard HTML file directly (not the marketing landing page)
+        log('Loading local production build (dashboard.html)');
+        const dashboardPath = path.join(__dirname, 'web-build', 'dashboard.html');
+        log(`Dashboard file path: ${dashboardPath}`);
+
+        mainWindow.loadFile(dashboardPath)
+            .then(() => log('Dashboard loaded successfully'))
+            .catch(e => log(`Failed to load dashboard: ${e}`));
 
         // Temporarily enable DevTools in production for debugging
         mainWindow.webContents.openDevTools();
     }
+
+    // Show window when ready (after content loads)
+    mainWindow.once('ready-to-show', () => {
+        log('Window ready, showing now');
+        mainWindow.show();
+        mainWindow.focus();
+    });
 
     // Minimize to tray instead of closing
     mainWindow.on('close', (event) => {

@@ -59,7 +59,7 @@ export function Dashboard({ stats, lastTranscript, refinedTranscript, isRefining
                             <span className="text-xl">Download for Windows</span>
                             <ArrowRight size={20} />
                         </a>
-                        <p className="text-xs text-center text-text-muted">v1.0.12 • Windows 10/11</p>
+                        <p className="text-xs text-center text-text-muted">v1.0.24 • Windows 10/11</p>
                     </div>
                 </div>
             </div>}

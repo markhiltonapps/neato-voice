@@ -15,12 +15,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.on('trigger-record-toggle', callback);
     },
 
-    // Listen for enhance-last hotkey (Alt+E)
-    onEnhanceLast: (callback) => {
-        ipcRenderer.on('trigger-enhance-last', callback);
-    },
-
-    // Listen for enhance-selected hotkey (Alt+S)
+    // Listen for enhance-selected hotkey (Ctrl+E)
     onEnhanceSelected: (callback) => {
         ipcRenderer.on('trigger-enhance-selected', callback);
     },
@@ -28,10 +23,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Remove the listener when component unmounts
     removeToggleRecordingListener: () => {
         ipcRenderer.removeAllListeners('trigger-record-toggle');
-    },
-
-    removeEnhanceLastListener: () => {
-        ipcRenderer.removeAllListeners('trigger-enhance-last');
     },
 
     removeEnhanceSelectedListener: () => {
@@ -58,9 +49,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Refine text using AI in the main process
     refineText: (text, options) => ipcRenderer.invoke('refine-text', text, options),
 
-    // Enhancement methods for Alt+E and Alt+S
-    enhanceText: (text) => ipcRenderer.invoke('enhance-text', text),
-    getLastTranscription: () => ipcRenderer.invoke('get-last-transcription'),
+    // Enhancement methods for Ctrl+E
+    enhanceText: () => ipcRenderer.invoke('enhance-text'),
 
     // Stats
     getStats: () => ipcRenderer.invoke('get-stats'),

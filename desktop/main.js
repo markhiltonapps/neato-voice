@@ -125,10 +125,8 @@ function createWindow() {
         mainWindow.webContents.openDevTools();
     } else {
         // Load the live production web app for main window (Stable Auth & Routing)
-        // User requested Login Page to be the entry point
-        logger('Loading production Login Page (DEV OVERRIDE -> localhost)');
-        // mainWindow.loadURL('https://neato-voice.netlify.app/login');
-        mainWindow.loadURL('http://localhost:3000/login');
+        logger('Loading production Login Page');
+        mainWindow.loadURL('https://neato-voice.netlify.app/login');
     }
 
     // Minimize to tray instead of closing
@@ -178,9 +176,8 @@ function createOverlayWindow() {
         overlayWindow.loadURL('http://localhost:3000/overlay');
     } else {
         // Load via app:// protocol
-        logger(`Loading Overlay via app:// (DEV OVERRIDE -> localhost)`);
-        // overlayWindow.loadURL('app://neato-voice/overlay.html')
-        overlayWindow.loadURL('http://localhost:3000/overlay')
+        logger(`Loading Overlay from Production URL`);
+        overlayWindow.loadURL('https://neato-voice.netlify.app/overlay')
             .then(() => logger('[Overlay] Loaded successfully'))
             .catch(e => logger(`[Overlay] Failed to load: ${e}`));
     }
