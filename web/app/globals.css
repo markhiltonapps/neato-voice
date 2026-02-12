@@ -5,24 +5,37 @@
 @layer base {
   :root {
     /* Colors */
-    --color-bg-primary: #0B0B14;
-    --color-bg-secondary: #111122;
-    --color-bg-tertiary: #161628;
+    /* Retro Solar Theme */
+    --color-bg-primary: #2A1B15;
+    /* Deep Warm Brown */
+    --color-bg-secondary: #1F120D;
+    /* Darker Brown */
+    --color-bg-tertiary: #160D09;
 
-    --color-surface-1: #1A1A2E;
-    --color-surface-2: #222240;
-    --color-surface-3: #2A2A4A;
-    --color-surface-hover: #32325A;
+    --color-surface-1: #3E2921;
+    /* Lighter Brown */
+    --color-surface-2: #562717;
+    /* Solar Brown */
+    --color-surface-3: #6B3420;
+    --color-surface-hover: #7D4028;
 
-    --color-text-primary: #EAEAF0;
-    --color-text-secondary: #A8A8C0;
-    --color-text-muted: #6B6B88;
+    --color-text-primary: #FDDCA9;
+    /* Retro Cream */
+    --color-text-secondary: #D4B48A;
+    /* Muted Cream */
+    --color-text-muted: #9C8366;
+    /* Dark Cream */
 
-    --color-accent-red: #E63946;
-    --color-accent-blue: #4895EF;
-    --color-accent-cream: #F5E6D3;
-    --color-accent-gold: #F0B429;
-    --color-accent-cyan: #4CC9F0;
+    --color-accent-red: #C21717;
+    /* Retro Red */
+    --color-accent-blue: #5C8C8C;
+    /* Muted Teal (Complementary to warm tones) */
+    --color-accent-cream: #FDDCA9;
+    /* Retro Cream */
+    --color-accent-gold: #FEA712;
+    /* Retro Yellow */
+    --color-accent-cyan: #E76219;
+    /* Mapped to Retro Orange for "High Energy" spots */
 
     --color-product-receptionist: #0D7377;
     --color-product-prompt: #7C3AED;
@@ -137,7 +150,24 @@
   h5,
   h6 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    /* Retro Header Style */
+  }
+
+  /* Retro Texture */
+  .retro-grain {
+    position: relative;
+  }
+
+  .retro-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 50;
   }
 }
 

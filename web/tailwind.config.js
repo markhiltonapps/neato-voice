@@ -9,6 +9,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'retro-brown': '#562717',
+        'retro-red': '#C21717',
+        'retro-orange': '#E76219',
+        'retro-yellow': '#FEA712',
+        'retro-cream': '#FDDCA9',
         'bg-primary': 'var(--color-bg-primary)',
         'bg-secondary': 'var(--color-bg-secondary)',
         'bg-tertiary': 'var(--color-bg-tertiary)',
