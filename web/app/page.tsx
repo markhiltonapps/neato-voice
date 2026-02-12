@@ -108,6 +108,24 @@ const Hero = () => {
   };
 
 
+  /* Rotating Taglines Logic */
+  const taglines = [
+    { line1: "Stop typing.", line2: "Start talking." },
+    { line1: "Talk naturally.", line2: "Get perfectly written text." },
+    { line1: "Speak freely.", line2: "We'll handle the grammar." },
+    { line1: "Say it messy.", line2: "Get it clean." },
+    { line1: "Your words,", line2: "Just way better." }
+  ];
+
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % taglines.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative min-h-[100vh] flex flex-col justify-center items-center pb-20 pt-[clamp(140px,20vh,240px)] overflow-hidden retro-grain">
       {/* Background Effects - Solar Strip Theme */}
@@ -152,15 +170,25 @@ const Hero = () => {
           <span className="font-mono text-xs text-retro-cream uppercase tracking-widest font-bold">Neato Voice Desktop v1.0 Live</span>
         </motion.div>
 
-        <motion.h1
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.0] tracking-tight mb-8 text-retro-cream drop-shadow-lg"
-        >
-          Capture Your Thoughts.<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-retro-yellow via-retro-orange to-retro-red">Refined by AI.</span>
-        </motion.h1>
+        <div className="h-[160px] sm:h-[180px] lg:h-[220px] mb-8 relative flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute w-full px-4"
+            >
+              <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.0] tracking-tight text-retro-cream drop-shadow-lg">
+                {taglines[index].line1}<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-retro-yellow via-retro-orange to-retro-red">
+                  {taglines[index].line2}
+                </span>
+              </h1>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         <motion.p
           initial={{ y: 30, opacity: 0 }}
